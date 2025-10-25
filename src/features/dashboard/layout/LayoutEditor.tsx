@@ -1,54 +1,69 @@
 import {
+  useImperativeHandle,
   useRef,
-  type Dispatch,
-  type PropsWithChildren,
-  type SetStateAction,
-} from 'react';
-import { TextPanel } from './panel/TextPanel';
-import { TwitchPanel } from './panel/TwitchPanel';
-import type { PanelInfo } from './panel/type';
-import {
-  LayoutEditorComponent,
-  type LayoutEditorRefProps,
-} from './LayoutEditorComponent';
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+  type RefObject,
+} from "react";
+import GridLayout from "react-grid-layout";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
 
-type Props = PropsWithChildren<{
-  items: PanelInfo[];
-  setItems: Dispatch<SetStateAction<PanelInfo[]>>;
-}>;
+export type LayoutEditorRefProps = {
+  addPanel: (panel: GridLayout.Layout) => void;
+  removePanel: (panelId: string) => void;
+};
 
-export const LayoutEditor = ({ items, setItems }: Props) => {
-  const layoutEditorRef = useRef<LayoutEditorRefProps>(null);
+type Props = {
+  children: ReactNode;
+  ref?: RefObject<LayoutEditorRefProps | null>;
+};
 
-  const handleRemovePanel = (panelInfo: PanelInfo) => {
-    setItems(items.filter((item) => item.uuid !== panelInfo.uuid));
-    layoutEditorRef.current?.removePanel(panelInfo.uuid);
+export const LayoutEditor = ({ children, ref }: Props) => {
+  const [layout, setLayout] = useState<GridLayout.Layout[]>(() => {
+    const savedLayout = undefined;
+    // TODO: Zod validation
+    // const savedLayout = localStorage.getItem('dashboard-layout');
+    return savedLayout ? JSON.parse(savedLayout) : [];
+  });
+
+  const onLayoutChange = (newLayout: GridLayout.Layout[]) => {
+    setLayout(newLayout);
   };
 
+  useImperativeHandle(ref, () => ({
+    addPanel: (panel) => setLayout((l) => [...l, panel]),
+    removePanel: (panelId) =>
+      setLayout((l) => l.filter((v) => v.i === panelId)),
+  }));
+
+  const refDiv = useRef<HTMLDivElement>(null);
+  const width = useSyncExternalStore(
+    (cb) => {
+      const element = refDiv.current;
+      if (element === null) {
+        return () => {};
+      }
+
+      element.addEventListener("resize", cb);
+      return () => element.addEventListener("resize", cb);
+    },
+    () => refDiv.current?.clientWidth ?? 0,
+  );
+
   return (
-    <LayoutEditorComponent ref={layoutEditorRef}>
-      {items.map((item) => (
-        <div
-          key={item.uuid}
-          className="card bg-base-100 shadow-xl overflow-hidden"
-        >
-          <div className="card-body p-0 h-full">
-            {item.type === 'text' ? (
-              <TextPanel panelInfo={item} />
-            ) : item.type === 'twitch' ? (
-              <TwitchPanel panelInfo={item} />
-            ) : (
-              <>????</>
-            )}
-            <button
-              className="btn btn-xs btn-circle absolute top-2 right-2"
-              onClick={() => handleRemovePanel(item)}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      ))}
-    </LayoutEditorComponent>
+    <div ref={refDiv}>
+      <GridLayout
+        className="layout"
+        draggableCancel={`.${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+        layout={layout}
+        cols={12}
+        rowHeight={100}
+        width={width}
+        onLayoutChange={onLayoutChange}
+      >
+        {children}
+      </GridLayout>
+    </div>
   );
 };

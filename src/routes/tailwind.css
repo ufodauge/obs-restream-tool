@@ -1,2 +1,13 @@
-@import 'tailwindcss';
-@plugin "daisyui";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+  /* themes: light --default, dark --prefersdark; */
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+html {
+  scrollbar-width: none;
+}

@@ -27,6 +27,8 @@
     "eslint-plugin-react-refresh": "catalog:",
     "eslint-plugin-react-you-might-not-need-an-effect": "catalog:",
     "globals": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:",
     "re-resizable": "catalog:",
     "react-grid-layout": "catalog:",
     "react-resizable": "catalog:",
@@ -37,5 +39,5 @@
     "vite": "catalog:",
     "zod": "catalog:"
   },
-  "packageManager": "pnpm@10.18.3"
+  "packageManager": "pnpm@10.19.0"
 }

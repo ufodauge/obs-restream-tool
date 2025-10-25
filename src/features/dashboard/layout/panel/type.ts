@@ -53,7 +53,7 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
     case 'twitch':
       return {
         type: 'twitch',
-        channel: '_',
+        channel: 'ajakany',
         uuid: v7(),
       };
   }
