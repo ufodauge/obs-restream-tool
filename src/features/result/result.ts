@@ -1,0 +1,44 @@
+export type Ok<T> = {
+  ok: true;
+  value: T;
+  unwrapOr: (or: T) => T;
+  unwrapOrElse: (fn: () => T) => T;
+  map: <U>(fn: (v: T) => U) => Ok<U>;
+  mapOr: <U>(fn: (v: T) => U, or: U) => Ok<U>;
+  mapOrElse: <U>(fn: (v: T) => U, orElse: () => U) => Ok<U>;
+};
+
+export type Err<E extends Error> = {
+  ok: false;
+  error: E;
+  unwrapOr: <T>(or: T) => T;
+  unwrapOrElse: <T>(fn: () => T) => T;
+  map: <U>(fn: (v: never) => U) => Err<E>;
+  mapOr: <U>(fn: (v: never) => U, or: U) => Ok<U>;
+  mapOrElse: <U>(fn: (v: never) => U, orElse: () => U) => Ok<U>;
+};
+
+export type Result<T, E  extends Error> = Ok<T> | Err<E>;
+
+export const ok = <T>(value: T): Ok<T> => ({
+  value,
+  ok: true,
+  unwrapOr: () => value,
+  unwrapOrElse: () => value,
+  map: <U>(fn: (v: T) => U) => ok(fn(value)),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mapOr: <U>(fn: (v: T) => U, _: U) => ok(fn(value)),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mapOrElse: <U>(fn: (v: T) => U, _: () => U) => ok(fn(value)),
+});
+
+export const err = <E  extends Error>(error: E): Err<E> => ({
+  error,
+  ok: false,
+  unwrapOr: <T>(or: T) => or,
+  unwrapOrElse: <T>(fn: () => T) => fn(),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  map: <U>(_fn: (v: never) => U) => err(error),
+  mapOr: <U>(_fn: (v: never) => U, or: U) => ok(or),
+  mapOrElse: <U>(_fn: (v: never) => U, orElse: () => U) => ok(orElse()),
+});

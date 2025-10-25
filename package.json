@@ -1,0 +1,41 @@
+{
+  "name": "obs-restream-tool-sample",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/react-grid-layout": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "daisyui": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-react-refresh": "catalog:",
+    "eslint-plugin-react-you-might-not-need-an-effect": "catalog:",
+    "globals": "catalog:",
+    "re-resizable": "catalog:",
+    "react-grid-layout": "catalog:",
+    "react-resizable": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "uuid": "catalog:",
+    "vite": "catalog:",
+    "zod": "catalog:"
+  },
+  "packageManager": "pnpm@10.18.3"
+}
