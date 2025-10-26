@@ -2,13 +2,13 @@ import type { RefObject } from "react";
 import type { TwitchPanelInfo } from "../type";
 
 type Props = {
-  popoverRef: RefObject<HTMLElement | null>;
+  dialogRef: RefObject<HTMLElement | null>;
   panelInfo: TwitchPanelInfo;
 };
 
 const NAME_FIELD_CHANNEL_ID = "channel_id";
 
-export const TwitchPanelInfoEditor = ({ panelInfo, popoverRef }: Props) => {
+export const TwitchPanelInfoEditor = ({ panelInfo }: Props) => {
   const submitHandler = (data: FormData): void => {
     const channel_id = data.get(NAME_FIELD_CHANNEL_ID);
     if (typeof channel_id !== "string") {
@@ -17,7 +17,7 @@ export const TwitchPanelInfoEditor = ({ panelInfo, popoverRef }: Props) => {
     }
 
     console.log(channel_id);
-    popoverRef.current?.hidePopover();
+    // dialogRef.current?.();
   };
 
   return (

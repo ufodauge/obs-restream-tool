@@ -2,13 +2,13 @@ import type { RefObject } from "react";
 import type { TextPanelInfo } from "../type";
 
 type Props = {
-  popoverRef: RefObject<HTMLElement | null>;
+  dialogRef: RefObject<HTMLDialogElement | null>;
   panelInfo: TextPanelInfo;
 };
 
 const NAME_FIELD_CONTENT = "content";
 
-export const TextPanelInfoEditor = ({ panelInfo, popoverRef }: Props) => {
+export const TextPanelInfoEditor = ({ panelInfo, dialogRef }: Props) => {
   const submitHandler = (data: FormData): void => {
     const content = data.get(NAME_FIELD_CONTENT);
     if (typeof content !== "string") {
@@ -17,7 +17,7 @@ export const TextPanelInfoEditor = ({ panelInfo, popoverRef }: Props) => {
     }
 
     console.log(content);
-    popoverRef.current?.hidePopover();
+    dialogRef.current?.close();
   };
 
   return (
