@@ -18,7 +18,7 @@ export type Err<E extends Error> = {
   mapOrElse: <U>(fn: (v: never) => U, orElse: () => U) => Ok<U>;
 };
 
-export type Result<T, E  extends Error> = Ok<T> | Err<E>;
+export type Result<T, E extends Error> = Ok<T> | Err<E>;
 
 export const ok = <T>(value: T): Ok<T> => ({
   value,
@@ -32,7 +32,7 @@ export const ok = <T>(value: T): Ok<T> => ({
   mapOrElse: <U>(fn: (v: T) => U, _: () => U) => ok(fn(value)),
 });
 
-export const err = <E  extends Error>(error: E): Err<E> => ({
+export const err = <E extends Error>(error: E): Err<E> => ({
   error,
   ok: false,
   unwrapOr: <T>(or: T) => or,

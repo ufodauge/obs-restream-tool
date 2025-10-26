@@ -3,15 +3,10 @@ import gleam/list
 import gleam/os
 import gleam/result
 import gleam/string
+import gleam/string_tree
 
-// --- Configuration ---
-
-// The directory where the component will be placed (relative to current directory)
 const output_directory = "src/components/icons"
 
-// --- Helper Functions ---
-
-/// Converts a file path (e.g., "path/to/close_icon.svg") to a PascalCase component name (e.g., "CloseIcon").
 fn component_name_from_path(file_path: String) -> String {
   let file_name =
     file_path
@@ -72,7 +67,6 @@ fn extract_svg_details(
   }
 }
 
-/// Generates the final TypeScript React component string.
 fn generate_component_content(
   name: String,
   view_box: String,
@@ -98,54 +92,53 @@ fn generate_component_content(
     "\n",
   )
 }
+// // --- Main Script Logic ---
 
-// --- Main Script Logic ---
+// pub fn main() {
+//   let args = os.arguments()
 
-pub fn main() {
-  let args = os.arguments()
+//   case args {
+//     [_, file_path] -> {
+//       // 1. Read File
+//       let file_content = io.read(file_path)
 
-  case args {
-    [_, file_path] -> {
-      // 1. Read File
-      let file_content = io.read(file_path)
+//       // 2. Process Content
+//       let component_name = component_name_from_path(file_path)
+//       let file_name = component_name <> ".tsx"
+//       let output_path = string.join([output_directory, file_name], "/")
 
-      // 2. Process Content
-      let component_name = component_name_from_path(file_path)
-      let file_name = component_name <> ".tsx"
-      let output_path = string.join([output_directory, file_name], "/")
+//       case file_content {
+//         Ok(svg_content) -> {
+//           case extract_svg_details(svg_content) {
+//             Ok(#(view_box, inner_content)) -> {
+//               let component_code =
+//                 generate_component_content(
+//                   component_name,
+//                   view_box,
+//                   inner_content,
+//                 )
 
-      case file_content {
-        Ok(svg_content) -> {
-          case extract_svg_details(svg_content) {
-            Ok(#(view_box, inner_content)) -> {
-              let component_code =
-                generate_component_content(
-                  component_name,
-                  view_box,
-                  inner_content,
-                )
+//               // 3. Write File (This part requires Gleam's FFI or a build system wrapper)
+//               // Since Gleam's standard library does not have a public `write_file`
+//               // function, this is the logical place for a side-effect.
+//               // We will print the result and instruct the user on the final step.
 
-              // 3. Write File (This part requires Gleam's FFI or a build system wrapper)
-              // Since Gleam's standard library does not have a public `write_file`
-              // function, this is the logical place for a side-effect.
-              // We will print the result and instruct the user on the final step.
+//               io.println("--- Generated Component Code ---")
+//               io.println(component_code)
 
-              io.println("--- Generated Component Code ---")
-              io.println(component_code)
-
-              io.println("\n--- Output Instructions ---")
-              io.println("1. Ensure directory exists: " <> output_directory)
-              io.println("2. Manually save the code above to: " <> output_path)
-            }
-            Error(e) -> io.print_error("Error extracting SVG details: " <> e)
-          }
-        }
-        Error(e) ->
-          io.print_error("Error reading file " <> file_path <> ": " <> e)
-      }
-    }
-    _ -> {
-      io.print_error("Usage: gen-icon.gleam path/to/icon.svg")
-    }
-  }
-}
+//               io.println("\n--- Output Instructions ---")
+//               io.println("1. Ensure directory exists: " <> output_directory)
+//               io.println("2. Manually save the code above to: " <> output_path)
+//             }
+//             Error(e) -> io.print_error("Error extracting SVG details: " <> e)
+//           }
+//         }
+//         Error(e) ->
+//           io.print_error("Error reading file " <> file_path <> ": " <> e)
+//       }
+//     }
+//     _ -> {
+//       io.print_error("Usage: gen-icon.gleam path/to/icon.svg")
+//     }
+//   }
+// }

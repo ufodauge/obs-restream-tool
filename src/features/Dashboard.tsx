@@ -41,8 +41,8 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="p-4 bg-base-300 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+    <div className="min-h-screen bg-base-300 p-4">
+      <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
       <AddPanelForm onAddPanel={handleAddPanel} />
       <LayoutEditorContainer items={items} setItems={setItems} />
     </div>

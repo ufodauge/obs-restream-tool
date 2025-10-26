@@ -20,16 +20,16 @@ export const AddPanelForm = ({ onAddPanel: onAddPanel }: Props) => {
         onAddPanel(panelType);
       }
     },
-    [onAddPanel]
+    [onAddPanel],
   );
 
   return (
-    <div className="p-4 bg-base-200 rounded-lg mb-4">
+    <div className="mb-4 rounded-lg bg-base-200 p-4">
       <form
         action={onSubmit}
-        className="grid sm:grid-cols-[1fr_auto] grid-cols-1 gap-2"
+        className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]"
       >
-        <select className="select select-bordered" name={PANEL_TYPE_KEY}>
+        <select className="select-bordered select" name={PANEL_TYPE_KEY}>
           {Object.entries(panelTypeLabelMap).map(([key, text]) => (
             <option key={`panel-options-${key}`} value={key}>
               {text}

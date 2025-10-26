@@ -1,8 +1,8 @@
-import * as z from 'zod';
-import { v7 } from 'uuid';
+import * as z from "zod";
+import { v7 } from "uuid";
 
-const TextPanelTypeKey = z.literal('text');
-const TwitchPanelTypeKey = z.literal('twitch');
+const TextPanelTypeKey = z.literal("text");
+const TwitchPanelTypeKey = z.literal("twitch");
 
 const PanelTypesSchema = z.union([TextPanelTypeKey, TwitchPanelTypeKey]);
 
@@ -43,17 +43,17 @@ export const isPanelType = (str: string): str is PanelType => {
 // TODO: write test
 export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
   switch (type) {
-    case 'text':
+    case "text":
       return {
-        type: 'text',
-        content: 'text',
+        type: "text",
+        content: "text",
         uuid: v7(),
       };
 
-    case 'twitch':
+    case "twitch":
       return {
-        type: 'twitch',
-        channel: 'ajakany',
+        type: "twitch",
+        channel: "ajakany",
         uuid: v7(),
       };
   }

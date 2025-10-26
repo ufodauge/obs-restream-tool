@@ -4,7 +4,7 @@
 // import './App.css';
 
 export function Scene() {
-//   const [count, setCount] = useState(0);
+  //   const [count, setCount] = useState(0);
 
   return (
     <div className="card w-96 bg-base-100 shadow-sm">
@@ -18,7 +18,7 @@ export function Scene() {
           <li>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-success"
+              className="me-2 inline-block size-4 text-success"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -35,7 +35,7 @@ export function Scene() {
           <li>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-success"
+              className="me-2 inline-block size-4 text-success"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -52,7 +52,7 @@ export function Scene() {
           <li>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-success"
+              className="me-2 inline-block size-4 text-success"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -69,7 +69,7 @@ export function Scene() {
           <li>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-success"
+              className="me-2 inline-block size-4 text-success"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -86,7 +86,7 @@ export function Scene() {
           <li className="opacity-50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-base-content/50"
+              className="me-2 inline-block size-4 text-base-content/50"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -103,7 +103,7 @@ export function Scene() {
           <li className="opacity-50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-4 me-2 inline-block text-base-content/50"
+              className="me-2 inline-block size-4 text-base-content/50"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -119,7 +119,7 @@ export function Scene() {
           </li>
         </ul>
         <div className="mt-6">
-          <button className="btn btn-primary btn-block">Subscribe</button>
+          <button className="btn btn-block btn-primary">Subscribe</button>
         </div>
       </div>
     </div>

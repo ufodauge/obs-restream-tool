@@ -4,10 +4,7 @@ import {
   type PropsWithChildren,
   type SetStateAction,
 } from "react";
-import {
-  type LayoutEditorRefProps,
-  LayoutEditor,
-} from "./layout/LayoutEditor";
+import { type LayoutEditorRefProps, LayoutEditor } from "./layout/LayoutEditor";
 import { PanelContainer } from "./layout/panel/PanelContainer";
 import type { PanelInfo } from "./layout/panel/type";
 
