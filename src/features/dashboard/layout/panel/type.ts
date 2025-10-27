@@ -24,8 +24,9 @@ const TwitchPanelInfoSchema = z
   })
   .and(PanelInfoBaseSchema);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PanelInfoSchema = z.union([TextPanelInfoSchema, TwitchPanelInfoSchema]);
+
+export const PanelInfoListSchema = z.array(PanelInfoSchema);
 
 export type TextPanelInfo = z.infer<typeof TextPanelInfoSchema>;
 export type TwitchPanelInfo = z.infer<typeof TwitchPanelInfoSchema>;

@@ -1,14 +1,19 @@
 import type { RefObject } from "react";
-import type { TextPanelInfo } from "../type";
+import type { PanelInfo, TextPanelInfo } from "../type";
 
 type Props = {
   dialogRef: RefObject<HTMLDialogElement | null>;
   panelInfo: TextPanelInfo;
+  editInfo: (info: PanelInfo) => void;
 };
 
 const NAME_FIELD_CONTENT = "content";
 
-export const TextPanelInfoEditor = ({ panelInfo, dialogRef }: Props) => {
+export const TextPanelInfoEditor = ({
+  panelInfo,
+  dialogRef,
+  editInfo,
+}: Props) => {
   const submitHandler = (data: FormData): void => {
     const content = data.get(NAME_FIELD_CONTENT);
     if (typeof content !== "string") {
@@ -16,7 +21,10 @@ export const TextPanelInfoEditor = ({ panelInfo, dialogRef }: Props) => {
       return;
     }
 
-    console.log(content);
+    editInfo({
+      ...panelInfo,
+      content,
+    });
     dialogRef.current?.close();
   };
 

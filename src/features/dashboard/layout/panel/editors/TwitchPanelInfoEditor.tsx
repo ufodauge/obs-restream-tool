@@ -1,23 +1,31 @@
 import type { RefObject } from "react";
-import type { TwitchPanelInfo } from "../type";
+import type { PanelInfo, TwitchPanelInfo } from "../type";
 
 type Props = {
-  dialogRef: RefObject<HTMLElement | null>;
+  dialogRef: RefObject<HTMLDialogElement | null>;
   panelInfo: TwitchPanelInfo;
+  editInfo: (info: PanelInfo) => void;
 };
 
 const NAME_FIELD_CHANNEL_ID = "channel_id";
 
-export const TwitchPanelInfoEditor = ({ panelInfo }: Props) => {
+export const TwitchPanelInfoEditor = ({
+  panelInfo,
+  dialogRef,
+  editInfo,
+}: Props) => {
   const submitHandler = (data: FormData): void => {
-    const channel_id = data.get(NAME_FIELD_CHANNEL_ID);
-    if (typeof channel_id !== "string") {
-      console.error(`'${channel_id}' is not string`);
+    const channelId = data.get(NAME_FIELD_CHANNEL_ID);
+    if (typeof channelId !== "string") {
+      console.error(`'${channelId}' is not string`);
       return;
     }
 
-    console.log(channel_id);
-    // dialogRef.current?.();
+    editInfo({
+      ...panelInfo,
+      channel: channelId,
+    });
+    dialogRef.current?.close();
   };
 
   return (

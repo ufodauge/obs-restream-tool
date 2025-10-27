@@ -1,50 +1,56 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import GridLayout from "react-grid-layout";
 import { AddPanelForm } from "./dashboard/AddPanelForm";
 import {
   createDefaultPanelInfo,
+  PanelInfoListSchema,
   type PanelInfo,
   type PanelType,
 } from "./dashboard/layout/panel/type";
 import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
+import { tryParseJson } from "../libs/json/json";
+import type { LayoutEditorRefProps } from "./dashboard/layout/LayoutEditor";
 
+// TODO: overlap の許可、プリセット機能、グリッドの詳細度、パネルの追加易化
 export const Dashboard = () => {
+  const layoutEditorRef = useRef<LayoutEditorRefProps>(null);
+
+  // TODO: useSyncExternalStore
   const [items, setItems] = useState<PanelInfo[]>(() => {
-    const savedItems = localStorage.getItem("dashboard-items");
-    // TODO: Zod validation
-    return savedItems ? JSON.parse(savedItems) : [];
-  });
+    const savedItemsString = localStorage.getItem("dashboard-items");
+    if (savedItemsString === null) {
+      return [];
+    }
 
-  const [layout, setLayout] = useState<GridLayout.Layout[]>(() => {
-    const savedLayout = localStorage.getItem("dashboard-layout");
-    // TODO: Zod validation
-    return savedLayout ? JSON.parse(savedLayout) : [];
+    return tryParseJson(savedItemsString, PanelInfoListSchema).unwrapOr([]);
   });
-
-  // TODO: Save on commit time
-  // useEffect(() => {
-  //   localStorage.setItem('dashboard-items', JSON.stringify(items));
-  //   localStorage.setItem('dashboard-layout', JSON.stringify(layout));
-  // }, [items, layout]);
 
   const handleAddPanel = (panel: PanelType) => {
+    if (layoutEditorRef.current === null) {
+      return;
+    }
+
     const newItem = createDefaultPanelInfo(panel);
     const newLayoutItem: GridLayout.Layout = {
       i: newItem.uuid,
       x: (items.length * 4) % 12,
-      y: Infinity,
+      y: 0,
       w: 4,
       h: 3,
     };
     setItems([...items, newItem]);
-    setLayout([...layout, newLayoutItem]);
+    layoutEditorRef.current?.addPanel(newLayoutItem);
   };
 
   return (
     <div className="min-h-screen bg-base-300 p-4">
       <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
       <AddPanelForm onAddPanel={handleAddPanel} />
-      <LayoutEditorContainer items={items} setItems={setItems} />
+      <LayoutEditorContainer
+        items={items}
+        setItems={setItems}
+        ref={layoutEditorRef}
+      />
     </div>
   );
 };

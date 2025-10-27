@@ -7,9 +7,10 @@ import { TwitchPanelInfoEditor } from "./editors/TwitchPanelInfoEditor";
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;
   dialogRef: RefObject<HTMLDialogElement | null>;
+  editInfo: (info: PanelInfo) => void;
 }>;
 
-export const PanelInfoEditor = ({ dialogRef, panelInfo }: Props) => {
+export const PanelInfoEditor = ({ dialogRef, panelInfo, editInfo }: Props) => {
   return (
     <dialog
       ref={dialogRef}
@@ -17,15 +18,23 @@ export const PanelInfoEditor = ({ dialogRef, panelInfo }: Props) => {
     >
       <div className="modal-box">
         {panelInfo.type === "text" ? (
-          <TextPanelInfoEditor dialogRef={dialogRef} panelInfo={panelInfo} />
+          <TextPanelInfoEditor
+            dialogRef={dialogRef}
+            panelInfo={panelInfo}
+            editInfo={editInfo}
+          />
         ) : panelInfo.type === "twitch" ? (
-          <TwitchPanelInfoEditor dialogRef={dialogRef} panelInfo={panelInfo} />
+          <TwitchPanelInfoEditor
+            dialogRef={dialogRef}
+            panelInfo={panelInfo}
+            editInfo={editInfo}
+          />
         ) : (
           <>???</>
         )}
       </div>
       <form method="dialog" className="modal-backdrop">
-        <button>close</button>
+        <button>閉じる</button>
       </form>
     </dialog>
   );

@@ -1,0 +1,7 @@
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
+
+.react-grid-placeholder {
+  background-color: oklch(from var(--color-secondary) l c h / 30%) !important;
+  border-radius: var(--radius-md);
+}
