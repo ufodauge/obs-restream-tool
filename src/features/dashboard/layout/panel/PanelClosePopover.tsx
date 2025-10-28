@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout";
 
 type Props = {
   dialogRef: RefObject<HTMLDialogElement | null>;
@@ -6,8 +7,8 @@ type Props = {
 };
 
 export const PanelClosePopover = ({ dialogRef, onConfirmed }: Props) => (
-  <dialog ref={dialogRef} className="modal">
-    <div className="modal-box">
+  <dialog ref={dialogRef} className={`modal ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}>
+    <div className="modal-box"> 
       <h2 className="card-title">消去しますか？</h2>
       <p>この操作はもとに戻せません。</p>
       <div className="modal-action">

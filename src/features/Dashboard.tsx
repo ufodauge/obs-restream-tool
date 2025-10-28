@@ -1,29 +1,23 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import GridLayout from "react-grid-layout";
 import { AddPanelForm } from "./dashboard/AddPanelForm";
 import {
   createDefaultPanelInfo,
   PanelInfoListSchema,
-  type PanelInfo,
   type PanelType,
 } from "./dashboard/layout/panel/type";
 import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
-import { tryParseJson } from "../libs/json/json";
 import type { LayoutEditorRefProps } from "./dashboard/layout/LayoutEditor";
+import { useLocalStorage } from "../libs/hooks/useLocalStorage";
 
-// TODO: overlap の許可、プリセット機能、グリッドの詳細度、パネルの追加易化
 export const Dashboard = () => {
   const layoutEditorRef = useRef<LayoutEditorRefProps>(null);
 
-  // TODO: useSyncExternalStore
-  const [items, setItems] = useState<PanelInfo[]>(() => {
-    const savedItemsString = localStorage.getItem("dashboard-items");
-    if (savedItemsString === null) {
-      return [];
-    }
-
-    return tryParseJson(savedItemsString, PanelInfoListSchema).unwrapOr([]);
-  });
+  const [items, setItems] = useLocalStorage(
+    "dashboard-items",
+    PanelInfoListSchema,
+    [],
+  );
 
   const handleAddPanel = (panel: PanelType) => {
     if (layoutEditorRef.current === null) {
@@ -33,7 +27,7 @@ export const Dashboard = () => {
     const newItem = createDefaultPanelInfo(panel);
     const newLayoutItem: GridLayout.Layout = {
       i: newItem.uuid,
-      x: (items.length * 4) % 12,
+      x: 0,
       y: 0,
       w: 4,
       h: 3,

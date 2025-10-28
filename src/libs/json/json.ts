@@ -1,5 +1,5 @@
 import type { ZodType } from "zod";
-import { err, ok, type Result } from "../../features/result/result";
+import { ok, err, type Result } from "../result/result";
 
 export const tryParseJson = <T>(
   str: string,

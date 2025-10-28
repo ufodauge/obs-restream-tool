@@ -12,11 +12,7 @@ type Props = PropsWithChildren<{
   editItem: (item: PanelInfo) => void;
 }>;
 
-export const PanelContainer = ({
-  panelInfo,
-  removeItem,
-  editItem,
-}: Props) => {
+export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
   const editorDialogRef = useRef<HTMLDialogElement>(null);
   const panelCloseDialogRef = useRef<HTMLDialogElement>(null);
 
@@ -46,7 +42,7 @@ export const PanelContainer = ({
           dialogRef={panelCloseDialogRef}
           onConfirmed={() => {
             removeItem(panelInfo);
-            editorDialogRef.current?.hidePopover();
+            panelCloseDialogRef.current?.close();
           }}
         />,
         document.body,

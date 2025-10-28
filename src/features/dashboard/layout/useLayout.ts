@@ -1,21 +1,30 @@
-// import { useSyncExternalStore } from 'react';
-// import type { ZodType } from 'zod';
-// import { err, ok, type Result } from '../../result/result';
+import { useSyncExternalStore, type RefObject } from "react";
+import { useDebounce } from "../../../libs/hooks/useDebounce";
 
-// const subscribeWindowSizeChange = (callback: () => void) => {
-//   window.addEventListener('storage', callback);
-//   return () => window.removeEventListener('storage', callback);
-// };
+const aspectVideo = 9 / 16;
+const gridSize = 12;
 
-// export const useWindowWidth = <T>(
-//   key: string,
-//   zod: ZodType<T>
-// ): Result<T, Error> => {
-//   const item = useSyncExternalStore(subscribeWindowSizeChange, () =>
-//     localStorage.getItem(key)
-//   );
+export const useDebouncedGridLayoutParams = (
+  ref: RefObject<HTMLElement | null>,
+) => {
+  const width = useSyncExternalStore(
+    (cb) => {
+      window.addEventListener("resize", cb);
+      return () => window.addEventListener("resize", cb);
+    },
+    () => Math.floor(ref.current?.clientWidth ?? 0),
+  );
 
-//   const parsed = zod.safeParse(item);
+  const height = Math.floor(width * aspectVideo);
+  const rowHeight = Math.floor(height / gridSize);
 
-//   return parsed.success ? ok(parsed.data) : err(parsed.error);
-// };
+  return useDebounce(
+    {
+      width,
+      height,
+      rowHeight,
+      gridSize,
+    },
+    100,
+  );
+};
