@@ -24,7 +24,7 @@ export const AddPanelForm = ({ onAddPanel: onAddPanel }: Props) => {
   );
 
   return (
-    <div className="mb-4 rounded-lg bg-base-200 p-4">
+    <div className="rounded-md bg-base-200 p-2">
       <form
         action={onSubmit}
         className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]"
@@ -36,7 +36,7 @@ export const AddPanelForm = ({ onAddPanel: onAddPanel }: Props) => {
             </option>
           ))}
         </select>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-sm btn-primary">
           パネルを追加
         </button>
       </form>

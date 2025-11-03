@@ -10,8 +10,8 @@ import type { PanelInfo } from "./layout/panel/type";
 
 type Props = PropsWithChildren<{
   items: PanelInfo[];
-  ref?: RefObject<LayoutEditorRefProps | null>;
   setItems: Dispatch<SetStateAction<PanelInfo[]>>;
+  ref?: RefObject<LayoutEditorRefProps | null>;
 }>;
 
 export const LayoutEditorContainer = ({ items, setItems, ref }: Props) => {

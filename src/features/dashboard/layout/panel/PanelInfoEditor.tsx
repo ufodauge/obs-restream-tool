@@ -10,6 +10,7 @@ type Props = PropsWithChildren<{
   editInfo: (info: PanelInfo) => void;
 }>;
 
+// TODO: 汎用性が高いので切り出し
 export const PanelInfoEditor = ({ dialogRef, panelInfo, editInfo }: Props) => {
   return (
     <dialog

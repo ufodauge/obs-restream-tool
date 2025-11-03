@@ -6,6 +6,7 @@ type Props = {
   onConfirmed: () => void;
 };
 
+// TODO: 汎用性が高いのでリフトアップ
 export const PanelClosePopover = ({ dialogRef, onConfirmed }: Props) => (
   <dialog ref={dialogRef} className={`modal ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}>
     <div className="modal-box"> 

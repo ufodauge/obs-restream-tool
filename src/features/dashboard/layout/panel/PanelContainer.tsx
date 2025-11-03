@@ -18,13 +18,11 @@ export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
 
   return (
     <div
-      // has-[.panel-content:hover]:grid-rows-[.1rem_1fr]
       className={`grid size-full grid-rows-[auto_1fr] overflow-hidden rounded-md bg-base-200`}
     >
       <PanelHeader
         panelInfo={panelInfo}
         onCloseClick={() => panelCloseDialogRef.current?.showModal()}
-        // onCloseClick={removeSelf}
       />
       <div className="grid p-1">
         <PanelContent dialogRef={editorDialogRef} panelInfo={panelInfo} />

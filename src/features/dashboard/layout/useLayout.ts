@@ -10,14 +10,19 @@ export const useDebouncedGridLayoutParams = (
   const width = useSyncExternalStore(
     (cb) => {
       window.addEventListener("resize", cb);
+
       return () => window.addEventListener("resize", cb);
     },
     () => Math.floor(ref.current?.clientWidth ?? 0),
   );
 
+  
   const height = Math.floor(width * aspectVideo);
   const rowHeight = Math.floor(height / gridSize);
-
+  
+  // TODO: why is this called
+  console.log(width, height);
+  
   return useDebounce(
     {
       width,
@@ -25,6 +30,6 @@ export const useDebouncedGridLayoutParams = (
       rowHeight,
       gridSize,
     },
-    100,
+    400,
   );
 };

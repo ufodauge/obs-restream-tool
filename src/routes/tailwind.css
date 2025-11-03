@@ -1,13 +1,17 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: light --default;
-  /* themes: light --default, dark --prefersdark; */
+  /* themes: light --default; */
+  themes: light --default, dark --prefersdark;
 }
 
 .scrollbar-none {
   scrollbar-width: none;
 }
 
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
 html {
-  scrollbar-width: none;
+  scrollbar-width: thin;
 }

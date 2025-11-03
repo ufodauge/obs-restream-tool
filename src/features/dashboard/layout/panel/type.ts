@@ -47,15 +47,25 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
     case "text":
       return {
         type: "text",
-        content: "text",
+        content: "(sample text)",
         uuid: v7(),
       };
 
     case "twitch":
       return {
         type: "twitch",
-        channel: "ajakany",
+        channel: "(some channel id)",
         uuid: v7(),
       };
+  }
+};
+
+export const getPanelContentCaption = (info: PanelInfo): string => {
+  switch (info.type) {
+    case "text":
+      return info.content;
+
+    case "twitch":
+      return info.channel;
   }
 };

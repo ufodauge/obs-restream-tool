@@ -9,6 +9,7 @@ import {
 import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
 import type { LayoutEditorRefProps } from "./dashboard/layout/LayoutEditor";
 import { useLocalStorage } from "../libs/hooks/useLocalStorage";
+import { PanelsList } from "./dashboard/PanelsList";
 
 export const Dashboard = () => {
   const layoutEditorRef = useRef<LayoutEditorRefProps>(null);
@@ -37,14 +38,15 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-300 p-4">
-      <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
+    <div className="grid min-h-screen gap-2 bg-base-300 p-2">
       <AddPanelForm onAddPanel={handleAddPanel} />
       <LayoutEditorContainer
         items={items}
         setItems={setItems}
         ref={layoutEditorRef}
       />
+      <PanelsList panels={items} setPanels={setItems} />
+      <div className="h-full"></div>
     </div>
   );
 };

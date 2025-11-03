@@ -13,7 +13,10 @@ export const PanelContent = ({ panelInfo, dialogRef }: Props) => (
   <button
     type="button"
     onClick={() => dialogRef.current?.showModal()}
-    className={`grid cursor-pointer items-center justify-center overflow-hidden rounded-md bg-base-100 transition-colors hover:bg-primary/5 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+    className={
+      `grid cursor-pointer items-center justify-center overflow-hidden rounded-md ` +
+      `bg-base-100 transition-colors hover:bg-primary/5 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`
+    }
   >
     {panelInfo.type === "text" ? (
       <TextPanelContent panelInfo={panelInfo} />

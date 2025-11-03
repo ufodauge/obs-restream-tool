@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "format": "pnpm prettier -w .",
     "preview": "vite preview",
-    "script:gen-icons": "pnpm tsx ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm prettier -w src/components/icons"
+    "script:gen-icons": "pnpm dlx tsx ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm prettier -w src/components/icons"
   },
   "dependencies": {
     "react": "catalog:",

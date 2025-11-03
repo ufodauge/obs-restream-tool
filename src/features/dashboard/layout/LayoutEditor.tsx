@@ -41,7 +41,7 @@ export const LayoutEditor = ({ children, ref }: Props) => {
     useDebouncedGridLayoutParams(refDiv);
 
   return (
-    <div ref={refDiv}>
+    <div ref={refDiv} className="overflow-x-scroll scrollbar-thin">
       <GridLayout
         className="layout rounded-md bg-base-200"
         style={{
