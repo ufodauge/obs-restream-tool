@@ -1,8 +1,8 @@
 import { type PropsWithChildren, type RefObject } from "react";
-import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout";
 import type { PanelInfo } from "./type";
 import { TextPanelContent } from "./contents/TextPanelContent";
 import { TwitchPanelContent } from "./contents/TwitchPanelContent";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../dashboard/layout/layout";
 
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;

@@ -8,6 +8,8 @@ const PanelTypesSchema = z.union([TextPanelTypeKey, TwitchPanelTypeKey]);
 
 const PanelInfoBaseSchema = z.object({
   uuid: z.uuidv7(),
+  visible: z.boolean(),
+  static: z.boolean(),
 });
 
 const TextPanelInfoSchema = z
@@ -49,6 +51,8 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
         type: "text",
         content: "(sample text)",
         uuid: v7(),
+        visible: true,
+        static: false,
       };
 
     case "twitch":
@@ -56,11 +60,17 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
         type: "twitch",
         channel: "(some channel id)",
         uuid: v7(),
+        visible: true,
+        static: false,
       };
   }
 };
 
 export const getPanelContentCaption = (info: PanelInfo): string => {
+  return `${info.type} / ${getPanelContentDescription(info)}`;
+};
+
+export const getPanelContentDescription = (info: PanelInfo): string => {
   switch (info.type) {
     case "text":
       return info.content;

@@ -4,9 +4,7 @@ import { useDebounce } from "../../../libs/hooks/useDebounce";
 const aspectVideo = 9 / 16;
 const gridSize = 12;
 
-export const useDebouncedGridLayoutParams = (
-  ref: RefObject<HTMLElement | null>,
-) => {
+const useDebouncedElementWidth = (ref: RefObject<HTMLElement | null>) => {
   const width = useSyncExternalStore(
     (cb) => {
       window.addEventListener("resize", cb);
@@ -16,20 +14,21 @@ export const useDebouncedGridLayoutParams = (
     () => Math.floor(ref.current?.clientWidth ?? 0),
   );
 
-  
+  return useDebounce(width, 100);
+};
+
+export const useDebouncedGridLayoutParams = (
+  ref: RefObject<HTMLElement | null>,
+) => {
+  const width = useDebouncedElementWidth(ref);
+
   const height = Math.floor(width * aspectVideo);
   const rowHeight = Math.floor(height / gridSize);
-  
-  // TODO: why is this called
-  console.log(width, height);
-  
-  return useDebounce(
-    {
-      width,
-      height,
-      rowHeight,
-      gridSize,
-    },
-    400,
-  );
+
+  return {
+    width,
+    height,
+    rowHeight,
+    gridSize,
+  };
 };

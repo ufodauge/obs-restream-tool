@@ -1,10 +1,11 @@
 import { useRef, type PropsWithChildren } from "react";
 import type { PanelInfo } from "./type";
-import { createPortal } from "react-dom";
 import { PanelContent } from "./PanelContent";
-import { PanelInfoEditor } from "./PanelInfoEditor";
+import { PanelInfoEditForm } from "./PanelInfoEditorForm";
 import { PanelHeader } from "./PanelHeader";
 import { PanelClosePopover } from "./PanelClosePopover";
+import { Modal } from "../../components/Modal";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../dashboard/layout/layout";
 
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;
@@ -17,9 +18,7 @@ export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
   const panelCloseDialogRef = useRef<HTMLDialogElement>(null);
 
   return (
-    <div
-      className={`grid size-full grid-rows-[auto_1fr] overflow-hidden rounded-md bg-base-200`}
-    >
+    <div className="grid size-full grid-rows-[auto_1fr] overflow-hidden rounded-md bg-base-200">
       <PanelHeader
         panelInfo={panelInfo}
         onCloseClick={() => panelCloseDialogRef.current?.showModal()}
@@ -27,24 +26,29 @@ export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
       <div className="grid p-1">
         <PanelContent dialogRef={editorDialogRef} panelInfo={panelInfo} />
       </div>
-      {createPortal(
-        <PanelInfoEditor
+      <Modal
+        ref={editorDialogRef}
+        backdrop
+        className={RGL_DRAGGABLE_CANCEL_CLASS_NAME}
+      >
+        <PanelInfoEditForm
           dialogRef={editorDialogRef}
           panelInfo={panelInfo}
           editInfo={editItem}
-        />,
-        document.body,
-      )}
-      {createPortal(
+        />
+      </Modal>
+      <Modal
+        ref={panelCloseDialogRef}
+        backdrop
+        className={RGL_DRAGGABLE_CANCEL_CLASS_NAME}
+      >
         <PanelClosePopover
-          dialogRef={panelCloseDialogRef}
           onConfirmed={() => {
             removeItem(panelInfo);
             panelCloseDialogRef.current?.close();
           }}
-        />,
-        document.body,
-      )}
+        />
+      </Modal>
     </div>
   );
 };

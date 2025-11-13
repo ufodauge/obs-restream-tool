@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { isPanelType, type PanelType } from "./layout/panel/type";
+import { isPanelType, type PanelType } from "../panel/type";
 
 type Props = {
   onAddPanel: (w: PanelType) => void;

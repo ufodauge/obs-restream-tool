@@ -1,12 +1,11 @@
 import {
-  useImperativeHandle,
   useRef,
+  type Dispatch,
   type ReactNode,
-  type RefObject,
+  type SetStateAction,
 } from "react";
 import GridLayout from "react-grid-layout";
-import { LayoutSchema, RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
-import { useLocalStorage } from "../../../libs/hooks/useLocalStorage";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME, type Layout } from "./layout";
 import { useDebouncedGridLayoutParams } from "./useLayout";
 
 export type LayoutEditorRefProps = {
@@ -16,34 +15,23 @@ export type LayoutEditorRefProps = {
 
 type Props = {
   children: ReactNode;
-  ref?: RefObject<LayoutEditorRefProps | null>;
+  layout: Layout;
+  setLayout: Dispatch<SetStateAction<Layout>>;
 };
 
-export const LayoutEditor = ({ children, ref }: Props) => {
-  const [layout, setLayout] = useLocalStorage(
-    "dashboard-layout",
-    LayoutSchema,
-    [],
-  );
-
+export const LayoutEditor = ({ children, layout, setLayout }: Props) => {
   const onLayoutChange = (newLayout: GridLayout.Layout[]) => {
     setLayout(newLayout);
   };
-
-  useImperativeHandle(ref, () => ({
-    addPanel: (panel) => setLayout((l) => [...l, panel]),
-    removePanel: (panelId) =>
-      setLayout((l) => l.filter((v) => v.i === panelId)),
-  }));
 
   const refDiv = useRef<HTMLDivElement>(null);
   const { width, height, rowHeight, gridSize } =
     useDebouncedGridLayoutParams(refDiv);
 
   return (
-    <div ref={refDiv} className="overflow-x-scroll scrollbar-thin">
+    <div ref={refDiv} className="overflow-x-hidden rounded-md bg-base-200">
       <GridLayout
-        className="layout rounded-md bg-base-200"
+        className="layout"
         style={{
           width,
           height,
