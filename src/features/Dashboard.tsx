@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import GridLayout from "react-grid-layout";
 import { AddPanelForm } from "./dashboard/AddPanelForm";
 import {
   createDefaultPanelInfo,
@@ -7,41 +5,19 @@ import {
   type PanelType,
 } from "./panel/type";
 import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
-import type { LayoutEditorRefProps } from "./dashboard/layout/LayoutEditor";
 import { useLocalStorage } from "../libs/hooks/useLocalStorage";
 import { PanelsList } from "./dashboard/PanelsList";
-import { LayoutSchema } from "./dashboard/layout/layout";
 
 export const Dashboard = () => {
-  const layoutEditorRef = useRef<LayoutEditorRefProps>(null);
-
   const [items, setItems] = useLocalStorage(
     "dashboard-items",
     PanelInfoListSchema,
     [],
   );
 
-  const [layout, setLayout] = useLocalStorage(
-    "dashboard-layout",
-    LayoutSchema,
-    [],
-  );
-
   const handleAddPanel = (panel: PanelType) => {
-    if (layoutEditorRef.current === null) {
-      return;
-    }
-
     const newItem = createDefaultPanelInfo(panel);
-    const newLayoutItem: GridLayout.Layout = {
-      i: newItem.uuid,
-      x: 0,
-      y: 0,
-      w: 4,
-      h: 3,
-    };
     setItems([...items, newItem]);
-    layoutEditorRef.current?.addPanel(newLayoutItem);
   };
 
   return (
@@ -51,8 +27,14 @@ export const Dashboard = () => {
         <LayoutEditorContainer
           items={items}
           setItems={setItems}
-          layout={layout}
-          setLayout={setLayout}
+          layoutList={items.map((v) => v.layout)}
+          setLayoutList={
+            () => {
+              // TODO
+              throw new Error();
+            }
+            // setItems((p) => typeof layoutList === "function" ?  p.map((v) => layoutList()))
+          }
         />
         <PanelsList
           panels={items}

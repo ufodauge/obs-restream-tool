@@ -1,22 +1,20 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { LayoutEditor } from "./layout/LayoutEditor";
 import { PanelContainer } from "../panel/PanelContainer";
-import type { PanelInfo } from "../panel/type";
-import type { Layout } from "./layout/layout";
+import type { LayoutList, PanelInfo } from "../panel/type";
 
 type Props = {
   items: PanelInfo[];
   setItems: Dispatch<SetStateAction<PanelInfo[]>>;
-  layout: Layout;
-  setLayout: Dispatch<SetStateAction<Layout>>;
+  layoutList: LayoutList;
+  setLayoutList: Dispatch<SetStateAction<LayoutList>>;
 };
 
 export const LayoutEditorContainer = ({
   items,
   setItems,
-
-  layout,
-  setLayout,
+  layoutList,
+  setLayoutList,
 }: Props) => {
   const removeItem = (item: PanelInfo) =>
     setItems((prev) => prev.filter((v) => v.uuid !== item.uuid));
@@ -24,7 +22,7 @@ export const LayoutEditorContainer = ({
     setItems((prev) => prev.map((v) => (v.uuid === item.uuid ? item : v)));
 
   return (
-    <LayoutEditor layout={layout} setLayout={setLayout}>
+    <LayoutEditor layoutList={layoutList} setLayoutList={setLayoutList}>
       {items.map((item) => (
         <div key={item.uuid} className="scrollbar-none p-1">
           <div className="h-full rounded-md bg-base-100 outline-1 outline-base-content/20">

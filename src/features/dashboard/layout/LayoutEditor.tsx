@@ -5,23 +5,23 @@ import {
   type SetStateAction,
 } from "react";
 import GridLayout from "react-grid-layout";
-import { RGL_DRAGGABLE_CANCEL_CLASS_NAME, type Layout } from "./layout";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
 import { useDebouncedGridLayoutParams } from "./useLayout";
-
-export type LayoutEditorRefProps = {
-  addPanel: (panel: GridLayout.Layout) => void;
-  removePanel: (panelId: string) => void;
-};
+import type { LayoutList } from "../../panel/type";
 
 type Props = {
   children: ReactNode;
-  layout: Layout;
-  setLayout: Dispatch<SetStateAction<Layout>>;
+  layoutList: LayoutList;
+  setLayoutList: Dispatch<SetStateAction<LayoutList>>;
 };
 
-export const LayoutEditor = ({ children, layout, setLayout }: Props) => {
+export const LayoutEditor = ({
+  children,
+  layoutList,
+  setLayoutList,
+}: Props) => {
   const onLayoutChange = (newLayout: GridLayout.Layout[]) => {
-    setLayout(newLayout);
+    setLayoutList(newLayout);
   };
 
   const refDiv = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ export const LayoutEditor = ({ children, layout, setLayout }: Props) => {
           height,
         }}
         draggableCancel={`.${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
-        layout={layout}
+        layout={layoutList}
         cols={gridSize}
         resizeHandles={["ne", "nw", "se", "sw"]}
         rowHeight={rowHeight}
