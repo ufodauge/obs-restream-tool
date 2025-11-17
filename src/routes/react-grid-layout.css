@@ -1,7 +1,23 @@
-@import "react-grid-layout/css/styles.css";
-@import "react-resizable/css/styles.css";
+@import "react-grid-layout/css/styles.css" layer(react-grid-layout);
+@import "react-resizable/css/styles.css" layer(react-grid-layout);
 
 .react-grid-placeholder {
   background-color: oklch(from var(--color-secondary) l c h / 70%) !important;
   border-radius: var(--radius-md);
+}
+
+.react-grid-item {
+  > .react-resizable-handle {
+    background-image: none;
+
+    &::after {
+      border-color: transparent;
+    }
+  }
+
+  &:is(:hover, :active) > .react-resizable-handle {
+    &::after {
+      border-color: oklch(from var(--color-base-content) l c h / 30%);
+    }
+  }
 }

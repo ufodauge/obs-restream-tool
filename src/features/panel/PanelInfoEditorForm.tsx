@@ -1,16 +1,16 @@
-import { useRef, type PropsWithChildren, type RefObject } from "react";
+import { useRef, type PropsWithChildren } from "react";
 import type { PanelInfo } from "./type";
 import type { PanelInfoEditorRefProps } from "./editors/PanelInfoEditorRefProps";
 import { PanelInfoEditor } from "./editors/PanelInfoEditor";
 
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;
-  dialogRef: RefObject<HTMLDialogElement | null>;
   editInfo: (info: PanelInfo) => void;
+  onSubmitCompleted?: (info: PanelInfo) => void;
 }>;
 
 export const PanelInfoEditForm = ({
-  dialogRef,
+  onSubmitCompleted,
   panelInfo,
   editInfo,
 }: Props) => {
@@ -19,12 +19,12 @@ export const PanelInfoEditForm = ({
   const onSubmit = (data: FormData) => {
     const newPanelInfo = ref.current?.getModifiedPanelInfo(data);
     if (!newPanelInfo) {
-      console.error("ref is not bound.");
+      console.error("ref is not bounding.");
       return;
     }
 
     editInfo(newPanelInfo);
-    dialogRef.current?.close();
+    onSubmitCompleted?.(newPanelInfo);
   };
 
   return (

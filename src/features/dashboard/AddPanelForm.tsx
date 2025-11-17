@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { isPanelType, type PanelType } from "../panel/type";
 
 type Props = {
-  onAddPanel: (w: PanelType) => void;
+  onSubmit: (w: PanelType) => void;
 };
 
 const panelTypeLabelMap: Record<PanelType, string> = {
@@ -12,7 +12,7 @@ const panelTypeLabelMap: Record<PanelType, string> = {
 
 const PANEL_TYPE_KEY = "panel-type";
 
-export const AddPanelForm = ({ onAddPanel: onAddPanel }: Props) => {
+export const AddPanelForm = ({ onSubmit: onAddPanel }: Props) => {
   const onSubmit = useCallback(
     (data: FormData): void => {
       const panelType = data.get(PANEL_TYPE_KEY)?.toString();
@@ -27,9 +27,9 @@ export const AddPanelForm = ({ onAddPanel: onAddPanel }: Props) => {
     <div className="rounded-md bg-base-200 p-2">
       <form
         action={onSubmit}
-        className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]"
+        className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_1fr]"
       >
-        <select className="select-bordered select" name={PANEL_TYPE_KEY}>
+        <select className="select-bordered select w-full" name={PANEL_TYPE_KEY}>
           {Object.entries(panelTypeLabelMap).map(([key, text]) => (
             <option key={`panel-options-${key}`} value={key}>
               {text}

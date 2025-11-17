@@ -2,7 +2,6 @@ import * as z from "zod";
 import { v7 } from "uuid";
 
 export const LayoutSchema = z.object({
-  i: z.string(),
   x: z.number(),
   y: z.number(),
   w: z.number(),
@@ -23,7 +22,8 @@ const PanelTypesSchema = z.union([TextPanelTypeKey, TwitchPanelTypeKey]);
 const PanelInfoBaseSchema = z.object({
   uuid: z.uuidv7(),
   visible: z.boolean(),
-  static: z.boolean(),
+  pinned: z.boolean(),
+  alignTop: z.boolean(),
   layout: LayoutSchema,
 });
 
@@ -67,9 +67,9 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
         content: "(sample text)",
         uuid: v7(),
         visible: true,
-        static: false,
+        pinned: false,
+        alignTop: false,
         layout: {
-          i: v7(),
           w: 4,
           h: 3,
           x: 0,
@@ -83,9 +83,9 @@ export const createDefaultPanelInfo = (type: PanelType): PanelInfo => {
         channel: "(some channel id)",
         uuid: v7(),
         visible: true,
-        static: false,
+        pinned: false,
+        alignTop: false,
         layout: {
-          i: v7(),
           w: 4,
           h: 3,
           x: 0,

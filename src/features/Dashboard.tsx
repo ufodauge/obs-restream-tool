@@ -1,4 +1,3 @@
-import { AddPanelForm } from "./dashboard/AddPanelForm";
 import {
   createDefaultPanelInfo,
   PanelInfoListSchema,
@@ -7,6 +6,7 @@ import {
 import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
 import { useLocalStorage } from "../libs/hooks/useLocalStorage";
 import { PanelsList } from "./dashboard/PanelsList";
+import { AddPanelForm } from "./dashboard/AddPanelForm";
 
 export const Dashboard = () => {
   const [items, setItems] = useLocalStorage(
@@ -15,32 +15,22 @@ export const Dashboard = () => {
     [],
   );
 
-  const handleAddPanel = (panel: PanelType) => {
+  const onAddPanel = (panel: PanelType) => {
     const newItem = createDefaultPanelInfo(panel);
     setItems([...items, newItem]);
   };
 
+  console.log(items);
+
   return (
     <div className="min-h-screen bg-base-300 p-2">
       <div className="grid gap-2">
-        <AddPanelForm onAddPanel={handleAddPanel} />
         <LayoutEditorContainer
-          items={items}
+          items={items.filter((v) => v.visible)}
           setItems={setItems}
-          layoutList={items.map((v) => v.layout)}
-          setLayoutList={
-            () => {
-              // TODO
-              throw new Error();
-            }
-            // setItems((p) => typeof layoutList === "function" ?  p.map((v) => layoutList()))
-          }
         />
-        <PanelsList
-          panels={items}
-          setPanels={setItems}
-          onAddPanel={handleAddPanel}
-        />
+        <PanelsList panels={items} setPanels={setItems} />
+        <AddPanelForm onSubmit={onAddPanel} />
       </div>
     </div>
   );

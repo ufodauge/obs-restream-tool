@@ -22,21 +22,23 @@ export const useLocalStorage = <T>(
 ): [T, Dispatch<SetStateAction<T>>] => {
   const getSnapshot = () => localStorage.getItem(key);
 
-  const itemRaw = useSyncExternalStore(subscribeStorageEvent, getSnapshot);
+  const stateRaw = useSyncExternalStore(subscribeStorageEvent, getSnapshot);
 
-  const parsedValue =
-    itemRaw === null ? init : tryParseJson(itemRaw, schema).unwrapOr(init);
+  const state =
+    stateRaw === null ? init : tryParseJson(stateRaw, schema).unwrapOr(init);
 
   const setState = (value: SetStateAction<T>) => {
     const newValue =
-      typeof value === "function"
-        ? (value as (prev: T) => T)(parsedValue)
-        : value;
+      typeof value === "function" ? (value as (prev: T) => T)(state) : value;
 
     const stringifiedNewValue = JSON.stringify(newValue);
-    localStorage.setItem(key, stringifiedNewValue);
+    try {
+      localStorage.setItem(key, stringifiedNewValue);
+    } catch (e) {
+      console.error(e);
+    }
     dispatchStorageEvent(key, stringifiedNewValue);
   };
 
-  return [parsedValue, setState];
+  return [state, setState];
 };

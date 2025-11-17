@@ -7,24 +7,31 @@ import {
 import GridLayout from "react-grid-layout";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
 import { useDebouncedGridLayoutParams } from "./useLayout";
-import type { LayoutList } from "../../panel/type";
 
 type Props = {
   children: ReactNode;
-  layoutList: LayoutList;
-  setLayoutList: Dispatch<SetStateAction<LayoutList>>;
+  layoutList: GridLayout.Layout[];
+  setLayoutList: Dispatch<SetStateAction<GridLayout.Layout[]>>;
 };
+
+const resizeHandles: GridLayout["props"]["resizeHandles"] = [
+  "ne",
+  "nw",
+  "se",
+  "sw",
+  "e",
+  "n",
+  "s",
+  "w",
+];
 
 export const LayoutEditor = ({
   children,
   layoutList,
   setLayoutList,
 }: Props) => {
-  const onLayoutChange = (newLayout: GridLayout.Layout[]) => {
-    setLayoutList(newLayout);
-  };
-
   const refDiv = useRef<HTMLDivElement>(null);
+  // MEMO: <div style={{transform: 'scale(0.5) translate(-50%, -50%)'}}></div>
   const { width, height, rowHeight, gridSize } =
     useDebouncedGridLayoutParams(refDiv);
 
@@ -39,15 +46,16 @@ export const LayoutEditor = ({
         draggableCancel={`.${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
         layout={layoutList}
         cols={gridSize}
-        resizeHandles={["ne", "nw", "se", "sw"]}
+        // TODO: Custom
+        // resizeHandle={(v) => <>{v}</>}
+        resizeHandles={resizeHandles}
         rowHeight={rowHeight}
         margin={[0, 0]}
-        verticalCompact={false}
+        verticalCompact={true}
         maxRows={gridSize}
         width={width}
-        preventCollision
         isBounded
-        onLayoutChange={onLayoutChange}
+        onLayoutChange={setLayoutList}
       >
         {children}
       </GridLayout>

@@ -22,6 +22,7 @@ export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
       <PanelHeader
         panelInfo={panelInfo}
         onCloseClick={() => panelCloseDialogRef.current?.showModal()}
+        editItem={editItem}
       />
       <div className="grid p-1">
         <PanelContent dialogRef={editorDialogRef} panelInfo={panelInfo} />
@@ -32,7 +33,7 @@ export const PanelContainer = ({ panelInfo, removeItem, editItem }: Props) => {
         className={RGL_DRAGGABLE_CANCEL_CLASS_NAME}
       >
         <PanelInfoEditForm
-          dialogRef={editorDialogRef}
+          onSubmitCompleted={() => editorDialogRef.current?.close()}
           panelInfo={panelInfo}
           editInfo={editItem}
         />
