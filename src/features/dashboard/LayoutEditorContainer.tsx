@@ -18,35 +18,39 @@ const mapPanelInfoToGridLayout = (
     i: panelInfo.uuid,
   }));
 
+// そもそもこんな煩雑なことをするべきではない
+// どうせ feature 層でやるんだから
+// さっさと Atom にしろ
 const inverseMapPanelInfoToGridLayout = (
   layouts: ReactGridLayout.Layout[],
   panelInfoList: PanelInfo[],
 ): PanelInfo[] =>
-  panelInfoList.map((v) => ({
-    ...v,
-    layout: layouts.find(({ i: uuid }) => uuid === v.uuid) ?? {
-      w: 4,
-      h: 3,
-      x: 0,
-      y: 0,
-    },
-  }));
+  panelInfoList.map((v) => {
+    // 見つからないものは更新しない
+    const newLayout =
+      layouts.find(({ i: uuid }) => uuid === v.uuid) ?? v.layout;
+
+    return {
+      ...v,
+      layout: newLayout,
+    };
+  });
 
 export const LayoutEditorContainer = ({ items, setItems }: Props) => {
-  const removeItem = (item: PanelInfo) =>
-    setItems((prev) => prev.filter((v) => v.uuid !== item.uuid));
   const editItem = (item: PanelInfo) =>
     setItems((prev) => prev.map((v) => (v.uuid === item.uuid ? item : v)));
 
   const setLayoutList = useCallback<
     Dispatch<SetStateAction<ReactGridLayout.Layout[]>>
   >(
-    (layouts: SetStateAction<ReactGridLayout.Layout[]>) =>
-      createDerivedSetter<PanelInfo[], ReactGridLayout.Layout[]>(
+    (layouts: SetStateAction<ReactGridLayout.Layout[]>) => {
+      const setter = createDerivedSetter<PanelInfo[], ReactGridLayout.Layout[]>(
         setItems,
         mapPanelInfoToGridLayout,
         inverseMapPanelInfoToGridLayout,
-      )(layouts),
+      );
+      setter(layouts);
+    },
     [setItems],
   );
 
@@ -55,7 +59,7 @@ export const LayoutEditorContainer = ({ items, setItems }: Props) => {
       layoutList={items.map((panel) => ({
         ...panel.layout,
         i: panel.uuid,
-        static: !panel.alignTop,
+        static: panel.pinned || !panel.alignTop,
         isDraggable: !panel.pinned,
         isResizable: !panel.pinned,
       }))}
@@ -64,11 +68,7 @@ export const LayoutEditorContainer = ({ items, setItems }: Props) => {
       {items.map((item) => (
         <div key={item.uuid} className="scrollbar-none p-1">
           <div className="h-full rounded-md outline-1 outline-base-content/20">
-            <PanelContainer
-              panelInfo={item}
-              removeItem={removeItem}
-              editItem={editItem}
-            />
+            <PanelContainer panelInfo={item} editItem={editItem} />
           </div>
         </div>
       ))}

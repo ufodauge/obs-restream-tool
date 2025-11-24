@@ -7,6 +7,7 @@ import {
 import GridLayout from "react-grid-layout";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
 import { useDebouncedGridLayoutParams } from "./useLayout";
+import { useCompactionMode } from "../../../libs/store/compaction";
 
 type Props = {
   children: ReactNode;
@@ -35,13 +36,15 @@ export const LayoutEditor = ({
   const { width, height, rowHeight, gridSize } =
     useDebouncedGridLayoutParams(refDiv);
 
+  const compaction = useCompactionMode();
+
   return (
-    <div ref={refDiv} className="overflow-x-hidden rounded-md bg-base-200">
+    <div ref={refDiv} className="overflow-hidden rounded-md bg-base-200">
       <GridLayout
-        className="layout"
+        className="layout overflow-hidden"
         style={{
           width,
-          height,
+          minHeight: height,
         }}
         draggableCancel={`.${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
         layout={layoutList}
@@ -49,9 +52,10 @@ export const LayoutEditor = ({
         // TODO: Custom
         // resizeHandle={(v) => <>{v}</>}
         resizeHandles={resizeHandles}
+        compactType={compaction.enable ? compaction.mode : undefined}
         rowHeight={rowHeight}
-        margin={[0, 0]}
         verticalCompact={true}
+        margin={[0, 0]}
         maxRows={gridSize}
         width={width}
         isBounded

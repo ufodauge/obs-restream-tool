@@ -12,6 +12,7 @@
     "script:gen-icons": "pnpm dlx tsx ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm prettier -w src/components/icons"
   },
   "dependencies": {
+    "jotai": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

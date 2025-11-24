@@ -8,6 +8,7 @@ import { Modal } from "../../../components/Modal";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout/layout";
 import { PanelClosePopover } from "../../panel/PanelClosePopover";
 import { AlignVerticalTopIcon } from "../../../components/icons/AlignVerticalTopIcon";
+import { useCompactionMode } from "../../../libs/store/compaction";
 
 type Props = {
   panel: PanelInfo;
@@ -22,12 +23,24 @@ export const PanelListItemButtons = ({
 }: Props) => {
   const panelCloseDialogRef = useRef<HTMLDialogElement>(null);
 
+  const compaction = useCompactionMode();
+
   return (
     <div className="flex items-center gap-2">
       <ToggleButton
-        iconOn={<AlignVerticalTopIcon className={`size-4 fill-current`} />}
-        iconOff={<AlignVerticalTopIcon className={`size-4 fill-current/20`} />}
+        iconOn={
+          <AlignVerticalTopIcon
+            className={`${compaction.enable ? "fill-current" : "fill-transparent"}`}
+          />
+        }
+        iconOff={
+          <AlignVerticalTopIcon
+            className={`${compaction.enable ? "fill-current/20" : "fill-transparent"}`}
+          />
+        }
         checked={panel.alignTop}
+        className={`size-4`}
+        disabled={!compaction.enable}
         onChange={(e) =>
           editItem({
             ...panel,

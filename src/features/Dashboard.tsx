@@ -7,6 +7,7 @@ import { LayoutEditorContainer } from "./dashboard/LayoutEditorContainer";
 import { useLocalStorage } from "../libs/hooks/useLocalStorage";
 import { PanelsList } from "./dashboard/PanelsList";
 import { AddPanelForm } from "./dashboard/AddPanelForm";
+import { Toolbar } from "./dashboard/Toolbar";
 
 export const Dashboard = () => {
   const [items, setItems] = useLocalStorage(
@@ -20,11 +21,10 @@ export const Dashboard = () => {
     setItems([...items, newItem]);
   };
 
-  console.log(items);
-
   return (
     <div className="min-h-screen bg-base-300 p-2">
       <div className="grid gap-2">
+        <Toolbar />
         <LayoutEditorContainer
           items={items.filter((v) => v.visible)}
           setItems={setItems}

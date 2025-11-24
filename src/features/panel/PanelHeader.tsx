@@ -5,6 +5,7 @@ import { CloseIcon } from "../../components/icons/CloseIcon";
 import { KeepIcon } from "../../components/icons/KeepIcon";
 import { ToggleButton } from "../../components/ToggleButton";
 import { AlignVerticalTopIcon } from "../../components/icons/AlignVerticalTopIcon";
+import { useCompactionMode } from "../../libs/store/compaction";
 
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;
@@ -13,27 +14,29 @@ type Props = PropsWithChildren<{
 }>;
 
 export const PanelHeader = ({ panelInfo, onCloseClick, editItem }: Props) => {
+  const compaction = useCompactionMode();
+
   return (
     <div
-      className={`grid grid-cols-[1fr_auto] justify-end px-3 select-none ${panelInfo.pinned ? "" : "cursor-grab active:cursor-grabbing"}`}
+      className={`grid grid-cols-[1fr_auto] justify-end pr-1 pl-3 select-none ${panelInfo.pinned ? "" : "cursor-grab active:cursor-grabbing"}`}
     >
       <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap text-base-content/40">
         {getPanelContentCaption(panelInfo)}
       </span>
-      <div className="flex gap-1">
+      <div className="grid grid-cols-3 gap-1">
         <ToggleButton
           iconOn={
             <AlignVerticalTopIcon
-              className={`size-4 fill-current ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+              className={`fill-primary ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
             />
           }
           iconOff={
             <AlignVerticalTopIcon
-              className={`size-4 fill-current/20 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+              className={`fill-current/50 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
             />
           }
           checked={panelInfo.alignTop}
-          className={`p-1 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+          className={`size-4 ${compaction.enable ? "" : "hidden"}`}
           onChange={(e) =>
             editItem({
               ...panelInfo,
@@ -44,16 +47,16 @@ export const PanelHeader = ({ panelInfo, onCloseClick, editItem }: Props) => {
         <ToggleButton
           iconOn={
             <KeepIcon
-              className={`size-4 fill-current ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+              className={`fill-current ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
             />
           }
           iconOff={
             <KeepIcon
-              className={`size-4 fill-current/20 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+              className={`fill-current/20 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
             />
           }
           checked={panelInfo.pinned}
-          className={`p-1 ${RGL_DRAGGABLE_CANCEL_CLASS_NAME}`}
+          className={`size-4 p-1`}
           onChange={(e) =>
             editItem({
               ...panelInfo,
