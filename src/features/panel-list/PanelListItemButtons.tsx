@@ -1,14 +1,14 @@
 import { useRef } from "react";
-import { DeleteIcon } from "../../../components/icons/DeleteIcon";
-import { KeepIcon } from "../../../components/icons/KeepIcon";
-import { VisibilityIcon } from "../../../components/icons/VisibilityIcon";
-import { ToggleButton } from "../../../components/ToggleButton";
-import type { PanelInfo } from "../../panel/type";
-import { Modal } from "../../../components/Modal";
+import { DeleteIcon } from "../../components/icons/DeleteIcon";
+import { KeepIcon } from "../../components/icons/KeepIcon";
+import { VisibilityIcon } from "../../components/icons/VisibilityIcon";
+import { ToggleButton } from "../../components/ToggleButton";
+import type { PanelInfo } from "../panel/type";
+import { Modal } from "../../components/Modal";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout/layout";
-import { PanelClosePopover } from "../../panel/PanelClosePopover";
-import { AlignVerticalTopIcon } from "../../../components/icons/AlignVerticalTopIcon";
-import { useCompactionMode } from "../../../libs/store/compaction";
+import { PanelClosePopover } from "../panel/PanelClosePopover";
+import { AlignVerticalTopIcon } from "../../components/icons/AlignVerticalTopIcon";
+import { useCompactionMode } from "../../libs/store/compaction";
 
 type Props = {
   panel: PanelInfo;

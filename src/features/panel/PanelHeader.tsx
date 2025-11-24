@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from "react";
 import { getPanelContentCaption, type PanelInfo } from "./type";
-import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../dashboard/layout/layout";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout/layout";
 import { CloseIcon } from "../../components/icons/CloseIcon";
 import { KeepIcon } from "../../components/icons/KeepIcon";
 import { ToggleButton } from "../../components/ToggleButton";

@@ -1,5 +1,5 @@
 import { useCallback, type Dispatch, type SetStateAction } from "react";
-import { LayoutEditor } from "./layout/LayoutEditor";
+import { LayoutEditor } from "../layout/LayoutEditor";
 import { PanelContainer } from "../panel/PanelContainer";
 import { type PanelInfo } from "../panel/type";
 import { createDerivedSetter } from "../../libs/createDerivedSetter";

@@ -4,7 +4,7 @@ import { PanelContent } from "./PanelContent";
 import { PanelInfoEditForm } from "./PanelInfoEditorForm";
 import { PanelHeader } from "./PanelHeader";
 import { Modal } from "../../components/Modal";
-import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../dashboard/layout/layout";
+import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout/layout";
 
 type Props = PropsWithChildren<{
   panelInfo: PanelInfo;

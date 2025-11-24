@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { type PanelInfo } from "../panel/type";
-import { PanelListItemButtons } from "./panel-list/PanelListItemButtons";
-import { PanelListItemContent } from "./panel-list/PanelListItem";
+import { PanelListItemButtons } from "../panel-list/PanelListItemButtons";
+import { PanelListItemContent } from "../panel-list/PanelListItem";
 
 type Props = {
   panels: PanelInfo[];

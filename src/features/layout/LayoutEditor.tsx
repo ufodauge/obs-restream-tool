@@ -7,7 +7,7 @@ import {
 import GridLayout from "react-grid-layout";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "./layout";
 import { useDebouncedGridLayoutParams } from "./useLayout";
-import { useCompactionMode } from "../../../libs/store/compaction";
+import { useCompactionMode } from "../../libs/store/compaction";
 
 type Props = {
   children: ReactNode;

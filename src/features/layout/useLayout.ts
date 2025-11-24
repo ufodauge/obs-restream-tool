@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type RefObject } from "react";
-import { useDebounce } from "../../../libs/hooks/useDebounce";
+import { useDebounce } from "../../libs/hooks/useDebounce";
 
 const aspectVideo = 9 / 16;
 const gridSize = 12;

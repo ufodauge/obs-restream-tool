@@ -1,11 +1,11 @@
-import { AlignHorizontalLeftIcon } from "../../../components/icons/AlignHorizontalLeftIcon";
-import { AlignVerticalTopIcon } from "../../../components/icons/AlignVerticalTopIcon";
-import { ToggleButton } from "../../../components/ToggleButton";
+import { AlignHorizontalLeftIcon } from "../../components/icons/AlignHorizontalLeftIcon";
+import { AlignVerticalTopIcon } from "../../components/icons/AlignVerticalTopIcon";
+import { ToggleButton } from "../../components/ToggleButton";
 import {
   useToggleCompactionMode,
   useCompactionMode,
-} from "../../../libs/store/compaction";
-import { classNameToggleCompaction } from "../Toolbar";
+} from "../../libs/store/compaction";
+import { classNameToggleCompaction } from "../dashboard/Toolbar";
 
 export const CompactionModeToggler = () => {
   const toggleCompactionMode = useToggleCompactionMode();

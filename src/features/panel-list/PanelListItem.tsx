@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { Modal } from "../../../components/Modal";
-import { PanelClosePopover } from "../../panel/PanelClosePopover";
-import type { PanelInfo } from "../../panel/type";
+import { Modal } from "../../components/Modal";
+import { PanelClosePopover } from "../panel/PanelClosePopover";
+import type { PanelInfo } from "../panel/type";
 import { RGL_DRAGGABLE_CANCEL_CLASS_NAME } from "../layout/layout";
 import { PanelListTitle } from "./PanelListTitle";
-import { PanelInfoEditForm } from "../../panel/PanelInfoEditorForm";
+import { PanelInfoEditForm } from "../panel/PanelInfoEditorForm";
 
 type Props = {
   panel: PanelInfo;
