@@ -12,6 +12,8 @@ catalog:
   eslint-plugin-react-you-might-not-need-an-effect: 0.8.5
   globals: 17.0.0
   jotai: 2.16.2
+  oot-bingo-generator: 2.0.0
+  oot-bingo-lists: 2.1.1
   prettier: 3.8.1
   prettier-plugin-tailwindcss: 0.7.2
   re-resizable: 6.11.2

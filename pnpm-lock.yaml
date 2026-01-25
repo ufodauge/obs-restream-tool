@@ -45,6 +45,12 @@ catalogs:
     jotai:
       specifier: 2.16.2
       version: 2.16.2
+    oot-bingo-generator:
+      specifier: 2.0.0
+      version: 2.0.0
+    oot-bingo-lists:
+      specifier: 2.1.1
+      version: 2.1.1
     prettier:
       specifier: 3.8.1
       version: 3.8.1
@@ -138,6 +144,12 @@ importers:
       globals:
         specifier: 'catalog:'
         version: 17.0.0
+      oot-bingo-generator:
+        specifier: 'catalog:'
+        version: 2.0.0
+      oot-bingo-lists:
+        specifier: 'catalog:'
+        version: 2.1.1
       prettier:
         specifier: 'catalog:'
         version: 3.8.1
@@ -1260,6 +1272,15 @@ packages:
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
+
+  oot-bingo-generator@1.0.9:
+    resolution: {integrity: sha512-cmUweOJQWsvE6mZlT6Yw2PSbzHbnHZjOSTEp+CD/s1ystOqHYgkRa4JDLa/MVNnYH3KPLcKJ0SYCK2j3rVYtGg==}
+
+  oot-bingo-generator@2.0.0:
+    resolution: {integrity: sha512-Svbmv2wZ9qdmVbYjN4VpVqN4UdYgfU9r29cQtsqdlEks49x+0iBZc+O4H8souVBKKW3TmIEhMGNdnicia8Jl7Q==}
+
+  oot-bingo-lists@2.1.1:
+    resolution: {integrity: sha512-Gc/u44/RsqJYa5+NhlxmGQ4CXzRfnwv8KNaI/p0W4FrmsNxwN8SrIdp1Q/0uYmX1HTP48m2/XYrALSLBXEh6iQ==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -2527,6 +2548,14 @@ snapshots:
   node-releases@2.0.27: {}
 
   object-assign@4.1.1: {}
+
+  oot-bingo-generator@1.0.9: {}
+
+  oot-bingo-generator@2.0.0: {}
+
+  oot-bingo-lists@2.1.1:
+    dependencies:
+      oot-bingo-generator: 1.0.9
 
   optionator@0.9.4:
     dependencies:
