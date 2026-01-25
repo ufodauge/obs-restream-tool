@@ -22,7 +22,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/react-grid-layout": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "daisyui": "catalog:",
     "eslint": "catalog:",
@@ -43,5 +42,10 @@
     "vite": "catalog:",
     "zod": "catalog:"
   },
-  "packageManager": "pnpm@10.22.0"
+  "packageManager": "pnpm@10.28.1",
+  "pnpm": {
+    "executionEnv": {
+      "nodeVersion": "25.4.0"
+    }
+  }
 }
