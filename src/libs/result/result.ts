@@ -26,9 +26,7 @@ export const ok = <T>(value: T): Ok<T> => ({
   unwrapOr: () => value,
   unwrapOrElse: () => value,
   map: <U>(fn: (v: T) => U) => ok(fn(value)),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mapOr: <U>(fn: (v: T) => U, _: U) => ok(fn(value)),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mapOrElse: <U>(fn: (v: T) => U, _: () => U) => ok(fn(value)),
 });
 
@@ -37,7 +35,6 @@ export const err = <E extends Error>(error: E): Err<E> => ({
   ok: false,
   unwrapOr: <T>(or: T) => or,
   unwrapOrElse: <T>(fn: () => T) => fn(),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   map: <U>(_fn: (v: never) => U) => err(error),
   mapOr: <U>(_fn: (v: never) => U, or: U) => ok(or),
   mapOrElse: <U>(_fn: (v: never) => U, orElse: () => U) => ok(orElse()),

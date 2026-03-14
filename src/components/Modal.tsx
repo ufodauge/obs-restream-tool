@@ -8,22 +8,17 @@ type Props = PropsWithChildren<{
   onClose?: () => void;
 }>;
 
-export const Modal = ({
-  backdrop,
-  ref,
-  className,
-  children,
-  onClose,
-}: Props) => createPortal(
-  <dialog ref={ref} className={`modal ${className}`}>
-    <div className="modal-box">{children}</div>
-    <form
-      method="dialog"
-      className={`${backdrop ? "modal-backdrop" : ""}`}
-      onSubmit={onClose}
-    >
-      <button>閉じる</button>
-    </form>
-  </dialog>,
-  document.body
-);
+export const Modal = ({ backdrop, ref, className, children, onClose }: Props) =>
+  createPortal(
+    <dialog ref={ref} className={`modal ${className}`}>
+      <div className="modal-box">{children}</div>
+      <form
+        method="dialog"
+        className={`${backdrop ? "modal-backdrop" : ""}`}
+        onSubmit={onClose}
+      >
+        <button>閉じる</button>
+      </form>
+    </dialog>,
+    document.body,
+  );

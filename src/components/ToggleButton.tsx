@@ -14,7 +14,9 @@ type Props = {
 
 export const ToggleButton = ({ iconOff, iconOn, rotate, ...rest }: Props) => {
   return (
-    <label className={`swap ${rotate ? "swap-rotate" : ""} ${rest.disabled ? "cursor-auto" : ""}`}>
+    <label
+      className={`swap ${rotate ? "swap-rotate" : ""} ${rest.disabled ? "cursor-auto" : ""}`}
+    >
       <input type="checkbox" {...rest} />
       <div className="swap-on">{iconOn}</div>
       <div className="swap-off">{iconOff}</div>

@@ -1,56 +1,125 @@
-// import {
-//   createDefaultPanelInfo,
-//   PanelInfoListSchema,
-//   type PanelType,
-// } from "./panel/type";
-// import { useLocalStorage } from "../libs/hooks/useLocalStorage";
-import { getBingoList, latestBingoVersion } from "oot-bingo-lists";
-import { ootBingoGenerator } from "oot-bingo-generator";
+// import { useState } from 'react';
+// import reactLogo from './assets/react.svg';
+// import viteLogo from '/vite.svg';
+// import './App.css';
 
 export const Dashboard = () => {
-  const boardEnable = true;
-  const seed = 123456;
-  const bingoList = getBingoList(latestBingoVersion);
-  console.log(bingoList);
-  const bingoBoard = ootBingoGenerator(bingoList, {
-    mode: "normal",
-    seed,
-  });
+  //   const [count, setCount] = useState(0);
 
   return (
-    <div className="min-h-screen bg-base-100 p-2">
-      <div className="grid gap-2">
-        <div className="grid aspect-video grid-cols-13 grid-rows-13 gap-2 bg-base-200">
-          <div className="col-span-8 row-span-12 grid grid-cols-subgrid grid-rows-subgrid">
-            {Array.from({ length: 6 }, () => (
-              <div className="col-span-4 row-span-4 rounded-md bg-base-300 shadow-xs"></div>
-            ))}
-          </div>
-          {boardEnable ? (
-            <div className="col-span-5 row-span-8 grid grid-cols-5 grid-rows-5 gap-1">
-              {bingoBoard?.map(({ name, jp }) => (
-                <div className="grid place-content-center rounded-md bg-base-300 shadow-xs">
-                  <div
-                    className={`overflow-hidden text-center text-pretty text-ellipsis`}
-                  >
-                    {name} ({jp})
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <></>
-          )}
-          <div className="col-span-9 rounded-md bg-base-300 shadow-xs">
-            <div className="overflow-hidden text-nowrap text-ellipsis">
-              text
-            </div>
-          </div>
-          <div className="col-span-4 rounded-md bg-base-300 shadow-xs">
-            <div className="overflow-hidden text-nowrap text-ellipsis">
-              XX:XX:XX
-            </div>
-          </div>
+    <div className="card w-96 bg-base-100 shadow-sm">
+      <div className="card-body">
+        <span className="badge badge-xs badge-warning">Most Popular</span>
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-bold">Premium</h2>
+          <span className="text-xl">$29/mo</span>
+        </div>
+        <ul className="mt-6 flex flex-col gap-2 text-xs">
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span>High-resolution image generation</span>
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span>Customizable style templates</span>
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span>Batch processing capabilities</span>
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span>AI-driven image enhancements</span>
+          </li>
+          <li className="opacity-50">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-base-content/50"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span className="line-through">Seamless cloud integration</span>
+          </li>
+          <li className="opacity-50">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="me-2 inline-block size-4 text-base-content/50"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span className="line-through">Real-time collaboration tools</span>
+          </li>
+        </ul>
+        <div className="mt-6">
+          <button className="btn btn-block btn-primary">Subscribe</button>
         </div>
       </div>
     </div>

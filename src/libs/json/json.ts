@@ -1,4 +1,5 @@
 import type { ZodType } from "zod";
+
 import { ok, err, type Result } from "../result/result";
 
 export const tryParseJson = <T>(

@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "format": "pnpm prettier -w .",
     "preview": "vite preview",
-    "script:gen-icons": "pnpm dlx tsx ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm prettier -w src/components/icons"
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "script:gen-icons": "node ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm fmt src/components/icons"
   },
   "dependencies": {
     "jotai": "catalog:",
@@ -17,34 +19,27 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@eslint/js": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "daisyui": "catalog:",
-    "eslint": "catalog:",
-    "eslint-plugin-react-hooks": "catalog:",
-    "eslint-plugin-react-refresh": "catalog:",
-    "eslint-plugin-react-you-might-not-need-an-effect": "catalog:",
-    "globals": "catalog:",
     "oot-bingo-generator": "catalog:",
     "oot-bingo-lists": "catalog:",
-    "prettier": "catalog:",
-    "prettier-plugin-tailwindcss": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "re-resizable": "catalog:",
     "react-grid-layout": "catalog:",
     "react-resizable": "catalog:",
     "tailwindcss": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
     "uuid": "catalog:",
     "vite": "catalog:",
     "zod": "catalog:"
   },
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.32.1",
   "pnpm": {
     "executionEnv": {
       "nodeVersion": "25.4.0"

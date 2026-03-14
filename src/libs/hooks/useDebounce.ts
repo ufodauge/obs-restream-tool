@@ -7,7 +7,7 @@ export const useDebounce = <T>(input: T, delay: number): T => {
     const id = setTimeout(() => {
       setValue(input);
     }, delay);
-    
+
     return () => clearTimeout(id);
   }, [delay, input]);
 

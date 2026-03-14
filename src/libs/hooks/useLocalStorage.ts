@@ -4,6 +4,7 @@ import {
   type SetStateAction,
 } from "react";
 import type { ZodType } from "zod";
+
 import { tryParseJson } from "../json/json";
 
 const dispatchStorageEvent = (key: string, newValue: string) => {
@@ -42,4 +43,3 @@ export const useLocalStorage = <T>(
 
   return [state, setState];
 };
-

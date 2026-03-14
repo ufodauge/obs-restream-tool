@@ -1,4 +1,0 @@
-{
-  "tailwindStylesheet": "./src/routes/tailwind.css",
-  "plugins": ["prettier-plugin-tailwindcss"]
-}
