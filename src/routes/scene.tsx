@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Scene } from "../features/Scene";
+import { Scene } from "@/features/Scene";
 
 import "./tailwind.css";
 

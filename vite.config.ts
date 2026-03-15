@@ -1,4 +1,4 @@
-import { dirname, resolve } from "node:path";
+import path, { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -10,8 +10,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   build: {
-    rollupOptions: {
+    license: true,
+    rolldownOptions: {
       input: {
         index: resolve(__dirname, "index.html"),
         scene: resolve(__dirname, "scene.html"),
