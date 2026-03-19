@@ -12,7 +12,7 @@ export const SceneBoards = ({ className }: { className: string }) => {
     .filter(({ enable }) => enable)
     .map((v, i) =>
       v.type === "twitch" ? (
-        <TwitchPanel key={i} channel={v.channel} />
+        <TwitchPanel key={v.channel} channel={v.channel} />
       ) : (
         <div key={i}>unknown</div>
       ),
@@ -21,7 +21,7 @@ export const SceneBoards = ({ className }: { className: string }) => {
 
   return (
     <div
-      className={`${className} grid grid-flow-row-dense grid-cols-13 grid-rows-13 gap-1 backdrop-blur-xs backdrop-hue-rotate-60`}
+      className={`${className} grid grid-flow-row-dense grid-cols-13 grid-rows-13 gap-1 p-[.2cqw] backdrop-blur-xs backdrop-hue-rotate-60`}
     >
       <BoardPanel className="col-start-9 -col-end-1 row-span-9" />
       {panels}

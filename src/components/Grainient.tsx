@@ -207,7 +207,7 @@ const Grainient: React.FC<GrainientProps> = ({
 
     const mesh = new Mesh(gl, { geometry, program });
 
-    const setSize = () => {
+    const setSize: ResizeObserverCallback = () => {
       const rect = container.getBoundingClientRect();
       const width = Math.max(1, Math.floor(rect.width));
       const height = Math.max(1, Math.floor(rect.height));
@@ -220,7 +220,6 @@ const Grainient: React.FC<GrainientProps> = ({
 
     const ro = new ResizeObserver(setSize);
     ro.observe(container);
-    setSize();
 
     let raf = 0;
     const t0 = performance.now();

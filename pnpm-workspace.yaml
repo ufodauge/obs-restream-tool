@@ -8,9 +8,11 @@ catalog:
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   daisyui: 5.5.19
+  effect: 3.19.19
   jotai: 2.18.1
   lucide-react: 0.577.0
   ogl: ^1.0.11
+  oot-bingo-lists: 2.1.1
   oxfmt: 0.40.0
   oxlint: 1.55.0
   oxlint-tsgolint: 0.16.0

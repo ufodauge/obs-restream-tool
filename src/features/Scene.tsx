@@ -4,7 +4,7 @@ import { SceneBoards } from "./scene/SceneBoards";
 
 export const Scene = () => {
   return (
-    <div className="@container grid">
+    <div className="grid w-svw">
       <div className="col-span-full row-span-full">
         <Grainient
           color1="#7a8b19"
@@ -31,7 +31,7 @@ export const Scene = () => {
           zoom={0.9}
         />
       </div>
-      <SceneBoards className="col-span-full row-span-full aspect-video" />
+      {/* <SceneBoards className="col-span-full row-span-full aspect-video" /> */}
     </div>
   );
 };

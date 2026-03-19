@@ -34,6 +34,8 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "daisyui": "catalog:",
+    "effect": "catalog:",
+    "oot-bingo-lists": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",

@@ -1,41 +1,27 @@
-import { Suspense, use, useMemo } from "react";
+import { useAtomValue } from "jotai";
+import { generateBingoBoardFromVersion } from "oot-bingo-lists";
 
-const BoardPanelBody = ({ cells }: { cells: Promise<string | undefined> }) => {
-  const c = use(cells);
+import { translations } from "@/i18n/ootBingo";
 
-  console.log(c);
-
-  return (
-    <iframe
-      src="https://ootbingo.github.io/bingo/board-popout.html?version=10.5.1&seed=771575&mode=normal"
-      className="rounded-[.3cqw]"
-      width="100%"
-      height="100%"
-    />
-  );
-};
+import { boardSettings } from "./board/settings";
 
 export const BoardPanel = ({ className }: { className: string }) => {
-  const cells = useMemo(async () => {
-    const page = await fetch(
-      "https://ootbingo.github.io/bingo/board-popout.html?version=10.5.1&seed=771575&mode=normal",
-    );
+  const { version, seed } = useAtomValue(boardSettings);
 
-    if (!page.ok) {
-      return undefined;
-    }
-
-    const text = await page.text();
-    console.log(text);
-
-    return text;
-  }, []);
+  const board = generateBingoBoardFromVersion(version, "normal", seed)
+    ?.squares.values()
+    .map((v) => (
+      <span
+        key={v.goal.id}
+        className="grid place-content-center place-items-center rounded-[.3cqw] bg-neutral/70 px-[1cqw] text-center text-[.9cqw] text-balance text-neutral-content"
+      >
+        {translations.get(v.goal.name) ?? v.goal.name}
+      </span>
+    ));
 
   return (
     <div className={`${className} grid rounded-[.3cqw]`}>
-      <Suspense fallback={"loading"}>
-        <BoardPanelBody cells={cells} />
-      </Suspense>
+      <div className="grid grid-cols-5 grid-rows-5 gap-[.2cqw]">{board}</div>
     </div>
   );
 };
