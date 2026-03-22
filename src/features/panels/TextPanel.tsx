@@ -1,13 +1,14 @@
-export const TextPanel = ({
-  text,
-  className,
-}: {
+type Props = {
   text: string;
   className: string;
-}) => (
-  <div className={`grid items-baseline ${className}`}>
-    <span className="font-sans text-[2cqw] text-ellipsis text-white">
-      {text}
-    </span>
-  </div>
-);
+};
+
+export const TextPanel = ({ text, className }: Props) => {
+  return (
+    <div className={`grid items-baseline ${className}`}>
+      <span className="font-sans text-[2cqw] text-ellipsis text-neutral-content">
+        {text}
+      </span>
+    </div>
+  );
+};

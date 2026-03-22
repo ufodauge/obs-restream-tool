@@ -3,10 +3,10 @@ import { generateBingoBoardFromVersion } from "oot-bingo-lists";
 
 import { translations } from "@/i18n/ootBingo";
 
-import { boardSettings } from "./board/settings";
+import { boardSettingsStore } from "./board/settings";
 
 export const BoardPanel = ({ className }: { className: string }) => {
-  const { version, seed } = useAtomValue(boardSettings);
+  const { version, seed } = useAtomValue(boardSettingsStore);
 
   const board = generateBingoBoardFromVersion(version, "normal", seed)
     ?.squares.values()

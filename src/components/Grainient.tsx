@@ -273,4 +273,3 @@ const Grainient: React.FC<GrainientProps> = ({
 };
 
 export default Grainient;
-

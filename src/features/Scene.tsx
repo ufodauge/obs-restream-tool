@@ -31,7 +31,7 @@ export const Scene = () => {
           zoom={0.9}
         />
       </div>
-      {/* <SceneBoards className="col-span-full row-span-full aspect-video" /> */}
+      <SceneBoards className="col-span-full row-span-full aspect-video" />
     </div>
   );
 };

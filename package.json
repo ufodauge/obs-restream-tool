@@ -41,6 +41,7 @@
     "oxlint-tsgolint": "catalog:",
     "re-resizable": "catalog:",
     "react-grid-layout": "catalog:",
+    "react-hook-form": "catalog:",
     "react-resizable": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
@@ -48,10 +49,5 @@
     "vite": "catalog:",
     "zod": "catalog:"
   },
-  "packageManager": "pnpm@10.32.1",
-  "pnpm": {
-    "executionEnv": {
-      "nodeVersion": "25.4.0"
-    }
-  }
+  "packageManager": "pnpm@10.32.1"
 }
