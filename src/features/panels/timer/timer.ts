@@ -44,50 +44,49 @@ export const calcCurrentTime = (timer: GlobalTimer): number => {
 
   const pausedDuration = timer.pausedSpans.reduce((acc, v) => {
     return acc + (v.end - v.start);
-    // return acc.add(
-    //   Temporal.Instant.fromEpochMilliseconds(v.start).until(
-    //     Temporal.Instant.fromEpochMilliseconds(v.end),
-    //   ),
-    // );
   }, 0);
 
   switch (timer.state) {
     case "running":
       return Date.now() - timer.start - pausedDuration;
-    // return Temporal.Instant.fromEpochMilliseconds(timer.start)
-    //   .until(Temporal.Now.instant())
-    //   .subtract(pausedDuration);
+
     case "paused":
       return timer.pausedAt - timer.start - pausedDuration;
-    // return Temporal.Instant.fromEpochMilliseconds(timer.start)
-    //   .until(Temporal.Instant.fromEpochMilliseconds(timer.pausedAt))
-    //   .subtract(pausedDuration);
+
     case "stopped":
       return timer.end - timer.start - pausedDuration;
-    // return Temporal.Instant.fromEpochMilliseconds(timer.start)
-    //   .until(Temporal.Instant.fromEpochMilliseconds(timer.end))
-    //   .subtract(pausedDuration);
   }
 };
 
 export const reduceGlobalTimer = (
   timer: GlobalTimer,
-  action: "reset" | "start" | "resume" | "pause" | "stop",
+  args:
+    | {
+        action: "reset" | "start" | "resume" | "pause" | "stop";
+      }
+    | { action: "set"; duration: number },
 ): GlobalTimer => {
   switch (timer.state) {
     case "ready":
-      switch (action) {
+      switch (args.action) {
         case "start":
           return {
             ...timer,
             state: "running",
             start: Date.now(),
           };
+        case "set":
+          return {
+            ...timer,
+            state: "paused",
+            start: Date.now() - args.duration,
+            pausedAt: Date.now(),
+          };
         default:
           return timer;
       }
     case "running":
-      switch (action) {
+      switch (args.action) {
         case "pause":
           return {
             ...timer,
@@ -105,11 +104,17 @@ export const reduceGlobalTimer = (
             state: "ready",
             pausedSpans: [],
           };
+        case "set":
+          return {
+            ...timer,
+            start: Date.now() - args.duration,
+            pausedSpans: [],
+          };
         default:
           return timer;
       }
     case "paused":
-      switch (action) {
+      switch (args.action) {
         case "stop":
           return {
             ...timer,
@@ -133,11 +138,18 @@ export const reduceGlobalTimer = (
             state: "ready",
             pausedSpans: [],
           };
+        case "set":
+          return {
+            ...timer,
+            start: Date.now() - args.duration,
+            pausedAt: Date.now(),
+            pausedSpans: [],
+          };
         default:
           return timer;
       }
     case "stopped":
-      switch (action) {
+      switch (args.action) {
         case "resume":
           return {
             ...timer,
@@ -153,6 +165,13 @@ export const reduceGlobalTimer = (
         case "reset":
           return {
             state: "ready",
+            pausedSpans: [],
+          };
+        case "set":
+          return {
+            ...timer,
+            start: Date.now() - args.duration,
+            end: Date.now(),
             pausedSpans: [],
           };
         default:

@@ -6,10 +6,11 @@ import { TimerPanel } from "@/features/panels/TimerPanel";
 import { TwitchPanel } from "@/features/panels/TwitchPanel";
 import { videoPanelStores } from "@/features/panels/videos/panels";
 
-import { panelTextStore } from "../panels/text/text";
+import { sceneSettingsStore } from "../panels/scene/scene";
 
 export const SceneBoards = ({ className }: { className: string }) => {
   const panels = useAtomValue(videoPanelStores)
+    .toSorted((a, b) => b.size - a.size)
     .values()
     .filter(({ enable }) => enable)
     .map((v, i) =>
@@ -21,7 +22,7 @@ export const SceneBoards = ({ className }: { className: string }) => {
     )
     .toArray();
 
-  const text = useAtomValue(panelTextStore);
+  const { text } = useAtomValue(sceneSettingsStore);
 
   return (
     <div
@@ -29,13 +30,13 @@ export const SceneBoards = ({ className }: { className: string }) => {
     >
       <BoardPanel className="col-start-9 -col-end-1 row-span-9" />
       {panels}
-      <div className="col-span-5 -row-end-1 pb-2">
+      <div className="col-span-5 -row-start-2 -row-end-1 pb-2">
         <TimerPanel className="rounded-r-[.3cqw] bg-neutral/70" />
       </div>
-      <div className="col-span-8 -row-end-1 grid">
+      <div className="col-span-8 -row-start-2 -row-end-1 grid">
         <TextPanel
           text={text}
-          className="rounded-tl-[.3cqw] bg-neutral/70 pl-[4cqw]"
+          className="rounded-tl-[.3cqw] bg-neutral/70 p-1 pl-4"
         />
       </div>
     </div>

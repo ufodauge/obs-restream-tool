@@ -1,32 +1,27 @@
 import { useAtom } from "jotai";
 import { CheckIcon } from "lucide-react";
-import { latestBingoVersion } from "oot-bingo-lists";
 import type { ReactNode } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
-import { boardSettingsStore } from "../panels/board/settings";
+import { sceneSettingsStore } from "@/features/panels/scene/scene";
 
 type FormProps = {
-  seed: number;
+  text: string;
+  background: string;
 };
 
-export const BoardForm = (): ReactNode => {
-  const [boardSettings, setBoardSettings] = useAtom(boardSettingsStore);
+export const SceneSettingsForm = (): ReactNode => {
+  const [panelText, setPanelText] = useAtom(sceneSettingsStore);
 
   const { register, handleSubmit, formState, reset } = useForm<FormProps>({
     defaultValues: {
-      seed: boardSettings.seed,
+      ...panelText,
     },
   });
 
   const onSubmit: SubmitHandler<FormProps> = (data) => {
-    setBoardSettings({
-      seed: data.seed,
-      version: latestBingoVersion,
-    });
-    reset({
-      seed: data.seed,
-    });
+    setPanelText({ ...data });
+    reset({ ...data });
   };
 
   return (
@@ -36,20 +31,24 @@ export const BoardForm = (): ReactNode => {
       <div className="card-body">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-flow-col-dense gap-2"
+          className="grid grid-flow-row-dense gap-2"
         >
           <label className="label">
-            シード値
+            テキスト
             <input
-              type="number"
+              type="text"
               className="input"
-              placeholder="123456"
-              defaultValue={boardSettings.seed}
-              {...register("seed", {
-                min: 0,
-                valueAsNumber: true,
-                required: true,
-              })}
+              defaultValue={panelText.text}
+              {...register("text")}
+            />
+          </label>
+          <label className="label">
+            背景
+            <input
+              type="url"
+              className="input"
+              defaultValue={panelText.background}
+              {...register("background")}
             />
           </label>
           <button className="btn btn-circle" type="submit">

@@ -17,7 +17,8 @@ export const BoardPanel = ({ className }: { className: string }) => {
       >
         {translations.get(v.goal.name) ?? v.goal.name}
       </span>
-    ));
+    ))
+    .toArray();
 
   return (
     <div className={`${className} grid rounded-[.3cqw]`}>

@@ -5,64 +5,110 @@ import {
   SquareStopIcon,
   TimerResetIcon,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import {
   globalTimerStore,
   calcCurrentTime,
   reduceGlobalTimer,
+  type GlobalTimer,
 } from "@/features/panels/timer/timer";
 
 export const TimerForm = (): ReactNode => {
   const [timer, setTimer] = useAtom(globalTimerStore);
 
-  const start = () => setTimer(reduceGlobalTimer(timer, "start"));
-  const pause = () => setTimer(reduceGlobalTimer(timer, "pause"));
-  const reset = () => setTimer(reduceGlobalTimer(timer, "reset"));
-  const resume = () => setTimer(reduceGlobalTimer(timer, "resume"));
-  const stop = () => setTimer(reduceGlobalTimer(timer, "stop"));
+  const start = () =>
+    setTimer(
+      reduceGlobalTimer(timer, {
+        action: "start",
+      }),
+    );
+  const pause = () =>
+    setTimer(
+      reduceGlobalTimer(timer, {
+        action: "pause",
+      }),
+    );
+  const reset = () =>
+    setTimer(
+      reduceGlobalTimer(timer, {
+        action: "reset",
+      }),
+    );
+  const resume = () =>
+    setTimer(
+      reduceGlobalTimer(timer, {
+        action: "resume",
+      }),
+    );
+  const stop = () =>
+    setTimer(
+      reduceGlobalTimer(timer, {
+        action: "stop",
+      }),
+    );
+
+  const timerInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (timerInputRef.current === null) {
+      return;
+    }
+
+    const element = timerInputRef.current;
+
+    let skip = 5;
+    let prevState: GlobalTimer["state"] | undefined = undefined;
+    let id: number | undefined = undefined;
+    const update = () => {
+      if (timer.state !== "running" && prevState === timer.state) {
+        id = requestAnimationFrame(update);
+        return;
+      }
+      prevState = timer.state;
+
+      if (timer.state === "running" && --skip > 0) {
+        id = requestAnimationFrame(update);
+        return;
+      }
+      skip = 5;
+
+      const time = calcCurrentTime(timer);
+
+      if (element.valueAsNumber !== time) {
+        element.valueAsNumber = time;
+      }
+
+      id = requestAnimationFrame(update);
+    };
+
+    update();
+
+    return () => {
+      if (id) {
+        cancelAnimationFrame(id);
+      }
+    };
+  }, [timer]);
 
   return (
-    <div className="card w-96 gap-2 bg-base-100 p-2 shadow-sm card-border">
+    <div className="card gap-2 bg-base-100 p-2 shadow-sm card-border">
       <div
-        className={`grid justify-center ${timer.state === "stopped" ? "bg-primary text-primary-content" : "bg-neutral text-neutral-content"} rounded-md p-2 shadow-md`}
+        className={`grid justify-center ${timer.state === "stopped" ? "bg-primary text-primary-content" : "text-base-300-content bg-base-300"} rounded-md p-2 shadow-md`}
       >
-        <span
+        <input
+          type="time"
+          readOnly={timer.state === "running"}
+          onChange={(e) =>
+            setTimer(
+              reduceGlobalTimer(timer, {
+                action: "set",
+                duration: e.currentTarget.valueAsNumber,
+              }),
+            )
+          }
+          
           className={`font-mono text-xl`}
-          ref={(element) => {
-            if (element === null) {
-              return;
-            }
-
-            let id: number | undefined = undefined;
-            const update = () => {
-              const time = calcCurrentTime(timer);
-
-              const date = new Date(time);
-              const text = date.toLocaleTimeString("en-US", {
-                fractionalSecondDigits: 1,
-                hour12: false,
-                timeZone: "UTC",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              });
-
-              if (element.textContent !== text) {
-                element.textContent = text;
-              }
-
-              id = requestAnimationFrame(update);
-            };
-
-            update();
-
-            return () => {
-              if (id) {
-                cancelAnimationFrame(id);
-              }
-            };
-          }}
+          ref={timerInputRef}
         />
       </div>
       <div className="join justify-center">

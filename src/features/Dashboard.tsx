@@ -1,13 +1,13 @@
 import { BoardForm } from "./forms/BoardForm";
-import { PanelTextForm } from "./forms/PanelTextForm";
+import { SceneSettingsForm } from "./forms/SceneSettingsForm";
 import { TimerForm } from "./forms/TimerForm";
 import { VideoPanelForms } from "./forms/VideoPanelForms";
 
 export const Dashboard = () => {
   return (
-    <div className="flow w-svw gap-2 p-2">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(332px,1fr))] gap-2 bg-base-200 p-2 *:shadow">
       <BoardForm />
-      <PanelTextForm />
+      <SceneSettingsForm />
       <TimerForm />
       <VideoPanelForms />
     </div>
