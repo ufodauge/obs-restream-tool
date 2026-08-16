@@ -5,7 +5,7 @@
   },
   "printWidth": 80,
   "sortPackageJson": true,
-  "ignorePatterns": [],
+  "ignorePatterns": ["deploy.yml"],
   "endOfLine": "crlf",
   "sortImports": {
     "newlinesBetween": true,

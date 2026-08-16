@@ -1,6 +1,7 @@
-import { atomWithStorage } from "jotai/utils";
+import * as v from "valibot";
 
 import { STORAGE_KEY_PANEL_GLOBAL_TIMER } from "@/features/storage";
+import { atomWithValidatedStorage } from "@/libs/store/atomWithValidatedStorage";
 
 type State<K extends string, T extends {} = {}> = { state: K } & T;
 
@@ -25,16 +26,48 @@ export type GlobalTimer = StatedDuration & {
   pausedSpans: Duration[];
 };
 
-export const globalTimerStore = atomWithStorage<GlobalTimer>(
+const durationSchema: v.GenericSchema<unknown, Duration> = v.object({
+  start: v.number(),
+  end: v.number(),
+});
+
+// ストレージ境界の検証（B-1）専用。TimerForm は Phase 3 以降の対象なので
+// FormData 側の共通化はしない（GlobalTimer はボタン操作の reduce でしか
+// 更新されず、フォーム入力から組み立てることはないため）。
+const globalTimerSchema: v.GenericSchema<unknown, GlobalTimer> = v.variant(
+  "state",
+  [
+    v.object({
+      state: v.literal("ready"),
+      pausedSpans: v.array(durationSchema),
+    }),
+    v.object({
+      state: v.literal("running"),
+      start: v.number(),
+      pausedSpans: v.array(durationSchema),
+    }),
+    v.object({
+      state: v.literal("paused"),
+      start: v.number(),
+      pausedAt: v.number(),
+      pausedSpans: v.array(durationSchema),
+    }),
+    v.object({
+      state: v.literal("stopped"),
+      start: v.number(),
+      end: v.number(),
+      pausedSpans: v.array(durationSchema),
+    }),
+  ],
+);
+
+export const globalTimerStore = atomWithValidatedStorage<GlobalTimer>(
   STORAGE_KEY_PANEL_GLOBAL_TIMER,
   {
     state: "ready",
     pausedSpans: [],
   },
-  undefined,
-  {
-    getOnInit: true,
-  },
+  globalTimerSchema,
 );
 
 export const calcCurrentTime = (timer: GlobalTimer): number => {

@@ -1,37 +1,43 @@
-const hostname = URL.canParse(import.meta.url)
-  ? URL.parse(import.meta.url)?.hostname
-  : undefined;
-if (hostname === undefined) {
-  throw Error("unknown host name");
-}
-
-const SIZE_CLASSNAME_MAP = new Map([
-  ["1", "col-span-4 row-span-4"],
-  ["2", "col-span-8 row-span-8"],
-]);
+import { IframePanel } from "./IframePanel";
+import type { SubtextPosition } from "./videos/obsSyncSettings";
 
 export const TwitchPanel = ({
   channel,
   size,
+  subtext,
+  fill,
+  borderRadius,
+  subtextPosition,
 }: {
   channel: string;
   size: number;
+  subtext?: string;
+  fill?: boolean;
+  borderRadius?: number;
+  subtextPosition?: SubtextPosition;
 }) => {
+  // A-2: import.meta.url の hostname（モジュールを読み込んだ URL の
+  // ホスト名）ではなく window.location.hostname（実際にページを開いている
+  // オリジンのホスト名）を使う。base: "./" ビルドを file:// や OBS の
+  // ローカル配信で開くと import.meta.url は file:// / 相対 URL になり
+  // hostname が取れず、以前はここで throw してページ全体が死んでいた。
+  // Twitch の parent= にはそもそも「埋め込み先ページのホスト名」を渡す
+  // 必要があるので、window.location.hostname の方が意味的にも正しい。
+  const hostname = window.location.hostname;
   const url =
     import.meta.env.DEV && import.meta.env.VITE_TWITCH_STUB
       ? import.meta.env.VITE_TWITCH_STUB
       : `https://player.twitch.tv/?channel=${channel}&parent=${hostname}&muted=true&width=100%&heigh=100%`;
 
-  const className = `${SIZE_CLASSNAME_MAP.get(`${size}`) ?? "col-span-4 row-span-4"} rounded bg-base-300 shadow-xs`;
-
   return (
-    <div className={className}>
-      <iframe
-        src={url}
-        className="rounded"
-        width="100%"
-        height="100%"
-      />
-    </div>
+    <IframePanel
+      src={url}
+      size={size}
+      subtext={subtext}
+      fill={fill}
+      title={`Twitch: ${subtext ?? channel}`}
+      borderRadius={borderRadius}
+      subtextPosition={subtextPosition}
+    />
   );
 };

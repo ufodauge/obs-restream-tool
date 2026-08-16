@@ -4,8 +4,21 @@ import { useRef, useState } from "react";
 
 import { Modal } from "@/components/Modal";
 
-import { videoPanelStores } from "../panels/videos/panels";
+import { type PanelType, videoPanelStores } from "../panels/videos/panels";
 import { VideoPanelForm } from "./VideoPanelForm";
+
+const createDefaultPanel = (type: PanelType["type"]): PanelType => {
+  const base = {
+    enable: false,
+    id: crypto.randomUUID(),
+    size: 1 as const,
+    subtext: "",
+  };
+
+  return type === "twitch"
+    ? { ...base, type, channel: "channel_id" }
+    : { ...base, type, url: "https://example.com" };
+};
 
 export const VideoPanelForms = () => {
   const [videoPanel, setVideoPanel] = useAtom(videoPanelStores);
@@ -13,21 +26,23 @@ export const VideoPanelForms = () => {
   const [onModalOk, setOnModalOk] = useState<() => void>();
 
   return (
-    <div className="grid gap-2">
-      <div className="scrollbar-thin grid h-96 gap-2 overflow-y-scroll">
+    <div className="grid h-full min-h-0 grid-rows-[1fr_auto] gap-2">
+      {/*
+        Phase 4: 固定 h-96 をやめ、親（ドックの高さ）に追従させる。
+        grid-rows-[1fr_auto] で「一覧（伸縮）+ 追加ボタン列（内容ぶんの高さ）」
+        に分け、一覧側だけ min-h-0 を効かせてスクロールさせる（min-h-0 が
+        無いと grid item は内容の高さを最小サイズにしてしまい、親の高さで
+        頭打ちにならず overflow-y-scroll が効かない）。
+      */}
+      <div className="grid min-h-0 scrollbar-thin auto-rows-min gap-2 overflow-y-scroll">
         {videoPanel.map((v) => (
           <VideoPanelForm
             key={v.id}
             videoPanel={v}
             setVideoPanel={(data) => {
-              setVideoPanel((panels) => {
-                const result = panels.map((panel) =>
-                  panel.id === data.id ? data : panel,
-                );
-
-                console.log(data, panels, result);
-                return result;
-              });
+              setVideoPanel((panels) =>
+                panels.map((panel) => (panel.id === data.id ? data : panel)),
+              );
             }}
             removeVideoPanel={() => {
               setOnModalOk(() => () => {
@@ -41,24 +56,22 @@ export const VideoPanelForms = () => {
           />
         ))}
       </div>
-      <div className="grid p-2">
+      <div className="grid grid-cols-2 gap-2 p-2">
         <button
           className="btn btn-primary"
           onClick={() => {
-            setVideoPanel((p) => [
-              ...p,
-              {
-                channel: "channel_id",
-                enable: false,
-                id: crypto.randomUUID(),
-                size: 1,
-                subtext: "",
-                type: "twitch",
-              },
-            ]);
+            setVideoPanel((p) => [...p, createDefaultPanel("twitch")]);
           }}
         >
-          <PlusIcon />
+          <PlusIcon /> Twitch
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setVideoPanel((p) => [...p, createDefaultPanel("iframe")]);
+          }}
+        >
+          <PlusIcon /> iframe
         </button>
         <Modal ref={modalRef} backdrop>
           <div className="p-6">
@@ -71,7 +84,7 @@ export const VideoPanelForms = () => {
             >
               キャンセル
             </button>
-            <button className="btn btn-sm btn-error" onClick={onModalOk}>
+            <button className="btn btn-error btn-sm" onClick={onModalOk}>
               消す
             </button>
           </div>
