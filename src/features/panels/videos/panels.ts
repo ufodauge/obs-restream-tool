@@ -1,6 +1,7 @@
 import * as v from "valibot";
 
 import { STORAGE_KEY_PANEL_VIDEOS } from "@/features/storage";
+import { randomId } from "@/libs/id/randomId";
 import { atomWithValidatedStorage } from "@/libs/store/atomWithValidatedStorage";
 
 const AVAILABLE_TYPE_TWITCH = "twitch";
@@ -62,7 +63,9 @@ const panelTwitchSchema = v.object({
 const panelIframeSchema = v.object({
   ...panelCoreShape,
   type: v.literal(AVAILABLE_TYPE_IFRAME),
-  url: v.string(),
+  // VideoPanelForm の URL 入力は required で、新規作成時も "https://example.com" を
+  // 入れるので、空文字の「未設定」状態は存在しない。そのため空文字は許さない。
+  url: v.pipe(v.string(), v.url()),
 });
 
 // VideoPanelForm の FormData 検証（B-1 と共通化）・panels[] のストレージ検証の
@@ -82,7 +85,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "すば",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -90,7 +93,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "TKC",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -98,7 +101,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "猫麦とろろ",
     enable: false,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -106,7 +109,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "はやふぉ",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -114,7 +117,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "takera",
     enable: false,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -122,7 +125,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "ぷらずま",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -130,7 +133,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "つりゃ",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
 ];
 

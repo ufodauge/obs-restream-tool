@@ -13,11 +13,9 @@
     "fmt:check": "oxfmt --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "script:gen-icons": "node ./scripts/gen-icons.ts -i scripts/icons -o src/components/icons & pnpm fmt src/components/icons"
+    "package:obs": "node scripts/package-obs-portable.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/geist": "catalog:",
-    "clsx": "catalog:",
     "daisyui": "catalog:",
     "jotai": "catalog:",
     "lucide-react": "catalog:",
@@ -26,8 +24,6 @@
     "oot-bingo-lists": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tailwind-merge": "catalog:",
-    "tw-animate-css": "catalog:",
     "valibot": "catalog:"
   },
   "devDependencies": {
@@ -44,12 +40,11 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "shadcn": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "ws": "catalog:"
   },
-  "packageManager": "pnpm@11.21.0"
+  "packageManager": "pnpm@12.10.1"
 }

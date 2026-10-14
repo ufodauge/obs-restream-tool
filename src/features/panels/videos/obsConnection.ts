@@ -1,6 +1,7 @@
 import OBSWebSocket from "obs-websocket-js";
 
 import { packGrid, type PixelRect, type UnitSize } from "./layout";
+import { buildSlotUrl } from "./obsSetup";
 import type { ObsSyncSettings } from "./obsSyncSettings";
 import { selectEnabledPanelsWithSlotIndex, type PanelType } from "./panels";
 
@@ -56,6 +57,71 @@ const resolveSceneItemId = async (
   return sceneItemId;
 };
 
+/**
+ * スロット用の Browser Source がシーンに無いときに作る。動画パネルを
+ * 追加しても OBS 側の {sourcePrefix}N は増えないため、以前は
+ * 「スロット数を増やしてセットアップをやり直す」まで新しいパネルが
+ * 表示されなかった。sync() は矩形を割り当てたスロットについてだけ
+ * これを呼ぶ。
+ *
+ * 入力自体は既にある（シーンから外されただけ）場合や、並行する sync() が
+ * 先に作った場合は CreateInput が失敗するので、シーンアイテムを引き直し、
+ * それでも無ければ既存の入力をシーンに追加する。
+ */
+const createSlotSceneItem = async (
+  obs: OBSWebSocket,
+  cache: Map<string, number>,
+  settings: SyncSettings,
+  index: number,
+  rect: PixelRect,
+): Promise<number> => {
+  const sourceName = `${settings.sourcePrefix}${index}`;
+  const cacheKey = `${settings.sceneName}::${sourceName}`;
+
+  let sceneItemId: number;
+  try {
+    ({ sceneItemId } = await obs.call("CreateInput", {
+      sceneName: settings.sceneName,
+      inputName: sourceName,
+      inputKind: "browser_source",
+      inputSettings: {
+        url: buildSlotUrl(settings, index),
+        // obsSetup.ts の runObsSetup と同じく、ブラウザソース自体の解像度は
+        // 割り当てた矩形に合わせ、1px を下限にする。
+        width: Math.max(1, Math.round(rect.width)),
+        height: Math.max(1, Math.round(rect.height)),
+        shutdown: true,
+      },
+      // 有効化と配置は呼び出し側（sync()）がこの後に行う。
+      sceneItemEnabled: false,
+    }));
+  } catch (createInputError) {
+    try {
+      return await resolveSceneItemId(
+        obs,
+        cache,
+        settings.sceneName,
+        sourceName,
+      );
+    } catch {
+      // シーンアイテムはやはり無い。入力が既にあるなら追加する。
+    }
+    try {
+      ({ sceneItemId } = await obs.call("CreateSceneItem", {
+        sceneName: settings.sceneName,
+        sourceName,
+        sceneItemEnabled: false,
+      }));
+    } catch {
+      // シーンが無い等。CreateInput 側の理由の方が原因に近いのでそちらを投げる。
+      throw createInputError;
+    }
+  }
+
+  cache.set(cacheKey, sceneItemId);
+  return sceneItemId;
+};
+
 type ConnectionSettings = {
   enable: boolean;
   url: string;
@@ -63,10 +129,17 @@ type ConnectionSettings = {
 };
 
 // 同期呼び出し（sync）に必要な設定だけを抜き出した形。ObsSyncSettings から
-// enable/url/password（接続用）を除いたもの。
+// enable/url/password（接続用）を除いたもの。baseUrl は不足スロットを
+// 自動作成するときの slot.html の URL に使う。
 type SyncSettings = Pick<
   ObsSyncSettings,
-  "sceneName" | "sourcePrefix" | "slotCount" | "grid" | "area" | "gap"
+  | "sceneName"
+  | "sourcePrefix"
+  | "slotCount"
+  | "grid"
+  | "area"
+  | "gap"
+  | "baseUrl"
 >;
 
 /**
@@ -293,6 +366,10 @@ export class ObsSyncConnection {
    * packGrid には有効なパネルを size 降順に並べたものしか渡せないので、
    * selectEnabledPanelsWithSlotIndex で元の index を保持したまま並べ替え、
    * packGrid が返す矩形をその元 index に配り直してから同期する。
+   *
+   * スロットは max(slotCount, panels.length) 個ぶん扱う。矩形を割り当てた
+   * スロットのソースが OBS に無ければ自動で作る（createSlotSceneItem）ので、
+   * パネルを追加してもセットアップのやり直しは要らない。
    */
   async sync(panels: PanelType[], settings: SyncSettings): Promise<void> {
     const obs = this.obs;
@@ -308,6 +385,9 @@ export class ObsSyncConnection {
     const myConnectId = this.connectId;
     const mySyncId = ++this.syncId;
 
+    // slotCount は「最低限用意するスロット数」。パネルの方が多ければ
+    // 足りない分は下のループで自動作成する。
+    const slotCount = Math.max(settings.slotCount, panels.length);
     const enabledWithSlot = selectEnabledPanelsWithSlotIndex(panels);
     const sizes: UnitSize[] = enabledWithSlot.map(({ panel }) => panel.size);
     const rects = packGrid(sizes, settings.grid, settings.area, settings.gap);
@@ -322,7 +402,7 @@ export class ObsSyncConnection {
 
     const failedSources: string[] = [];
 
-    for (let index = 0; index < settings.slotCount; index++) {
+    for (let index = 0; index < slotCount; index++) {
       if (myConnectId !== this.connectId) return;
       if (mySyncId !== this.syncId) return; // 新しい sync() に追い越された
 
@@ -330,12 +410,28 @@ export class ObsSyncConnection {
       const rect = rectBySlotIndex.get(index);
 
       try {
-        const sceneItemId = await resolveSceneItemId(
-          obs,
-          this.sceneItemIdCache,
-          settings.sceneName,
-          sourceName,
-        );
+        let sceneItemId: number;
+        try {
+          sceneItemId = await resolveSceneItemId(
+            obs,
+            this.sceneItemIdCache,
+            settings.sceneName,
+            sourceName,
+          );
+        } catch (error) {
+          // 表示しないスロットのソースが無いだけなら、隠すものも無いので何もしない。
+          if (rect === undefined) {
+            continue;
+          }
+          console.info(`[obsSync] "${sourceName}" が無いので作成します`, error);
+          sceneItemId = await createSlotSceneItem(
+            obs,
+            this.sceneItemIdCache,
+            settings,
+            index,
+            rect,
+          );
+        }
 
         await obs.call("SetSceneItemEnabled", {
           sceneName: settings.sceneName,

@@ -1,7 +1,10 @@
 import * as v from "valibot";
 
 import { STORAGE_KEY_OBS_SYNC_SETTINGS } from "@/features/storage";
+import { tryParseJson } from "@/libs/json/json";
 import { atomWithValidatedStorage } from "@/libs/store/atomWithValidatedStorage";
+
+import { applyLaunchOverrides } from "./obsLaunchOverrides";
 
 // IframePanel の subtext（各スロットに重ねる補助テキスト）の表示位置。
 // "bottom-full" が今までの唯一の見た目（下部全幅バー）と完全に一致するので、
@@ -51,9 +54,15 @@ export interface ObsSyncSettings {
 // number input 由来の文字列を数値に直すための共通パイプ。valibot に
 // z.coerce 相当は無いので、Number() での変換を v.transform で明示的に書く
 // （壊れた値は NaN になり、後段の v.number() / v.integer() / v.minValue() で
-// 弾かれる）。
+// 弾かれる）。ただし Number("") と Number(null) は 0 になってしまうので、
+// 入力を空にした場合に黙って 0 とみなさないよう、変換の前に弾く。
 const coercedNumber = v.pipe(
   v.unknown(),
+  v.check(
+    (value) =>
+      value !== null && !(typeof value === "string" && value.trim() === ""),
+    "空の値は数値として扱えません",
+  ),
   v.transform((value) => Number(value)),
   v.number(),
 );
@@ -93,29 +102,72 @@ export const obsSyncSettingsSchema: v.GenericSchema<unknown, ObsSyncSettings> =
     area: v.object({
       x: coercedNumber,
       y: coercedNumber,
-      width: coercedNumber,
-      height: coercedNumber,
+      // 幅・高さ 0 だと packGrid の cellWidth/cellHeight が 0 になり全スロットが潰れるので 1 以上に絞る。
+      width: v.pipe(coercedNumber, v.minValue(1)),
+      height: v.pipe(coercedNumber, v.minValue(1)),
     }),
     gap: v.optional(coercedNonNegativeInt, 0),
     borderRadius: v.optional(coercedNonNegativeInt, 0),
     subtextPosition: v.optional(v.picklist(SUBTEXT_POSITIONS), "bottom-full"),
   });
 
+// 既定の配置は scene.html（Scene.tsx / SceneBoards.tsx）の 1920x1080 キャンバスで
+// ボード・タイマー・テキストバーが占有しない領域に合わせている。
+// SceneBoards は 13x13 グリッド（gap-1 = 4px）で、ボードが右上（列 9-13、行 1-9）、
+// タイマーとテキストバーが最下段（行 13）を占める。動画に使えるのは左側の
+// 列 1-8 × 行 1-12 の矩形（x 0-1180, y 0-996）で、ここを 2x3 に等分すると
+// セルは約 588x330（16:9 に近い）になる。gap 4px は SceneBoards の gap-1 と揃えた値。
+// 既存ユーザーの保存値は atomWithValidatedStorage がそのまま使うので、この既定値は
+// 保存値が無い（新規）場合にだけ効く。
+const defaultObsSyncSettings: ObsSyncSettings = {
+  enable: false,
+  url: "ws://127.0.0.1:4455",
+  password: "",
+  baseUrl: "http://localhost:5173",
+  sceneName: "",
+  sourcePrefix: "VideoSlot",
+  // videoPanelSourcesInit（panels.ts）は 7 件で、index 6 まで OBS 側のソースが
+  // 必要なので 7 以上にする（ObsSyncForm も slotCount < パネル数 で警告する）。
+  slotCount: 7,
+  // 2x3 = 6 セル。既定で有効なパネルは 5 件なので収まる。
+  grid: { cols: 2, rows: 3 },
+  area: { x: 0, y: 0, width: 1180, height: 996 },
+  gap: 4,
+  borderRadius: 0,
+  subtextPosition: "bottom-full",
+};
+
+// 配布パッケージ（packaging/）のランチャーが dock / sync の URL に付ける
+// クエリ（?obsUrl=&obsPassword=&obsScene=）と、ページ自身の場所（baseUrl）を
+// 保存済み設定へ反映する。atomWithValidatedStorage は getOnInit で
+// モジュール評価時に localStorage を読むため、atom を作る前にここで
+// 書き込んでおく必要がある。クエリが無く、かつ http://absolute/ 配下でも
+// ない通常（開発・既存ユーザー）の環境では何も書かない。
+const seedFromLaunch = (): void => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_OBS_SYNC_SETTINGS);
+    const stored =
+      raw === null
+        ? null
+        : tryParseJson(raw, obsSyncSettingsSchema).unwrapOr(null);
+    const base = stored ?? defaultObsSyncSettings;
+    const next = applyLaunchOverrides(
+      base,
+      stored !== null,
+      window.location.search,
+      window.location.href,
+    );
+    if (JSON.stringify(next) !== JSON.stringify(base)) {
+      localStorage.setItem(STORAGE_KEY_OBS_SYNC_SETTINGS, JSON.stringify(next));
+    }
+  } catch {
+    // localStorage が使えない等。シードは任意機能なので黙って諦める。
+  }
+};
+seedFromLaunch();
+
 export const obsSyncSettingsStore = atomWithValidatedStorage<ObsSyncSettings>(
   STORAGE_KEY_OBS_SYNC_SETTINGS,
-  {
-    enable: false,
-    url: "ws://127.0.0.1:4455",
-    password: "",
-    baseUrl: "http://localhost:5173",
-    sceneName: "",
-    sourcePrefix: "VideoSlot",
-    slotCount: 9,
-    grid: { cols: 3, rows: 3 },
-    area: { x: 0, y: 0, width: 1920, height: 1080 },
-    gap: 0,
-    borderRadius: 0,
-    subtextPosition: "bottom-full",
-  },
+  defaultObsSyncSettings,
   obsSyncSettingsSchema,
 );

@@ -175,28 +175,31 @@ const ObsSyncFormCard = ({
               />
             </label>
             <label className="label max-sm:floating-label">
-              <span>スロット数（OBS 側に用意した Browser Source の数）</span>
+              <span>
+                スロット数（セットアップで用意する Browser Source の数）
+              </span>
               <input
                 type="number"
                 name="slotCount"
                 min={1}
                 className="input input-sm"
-                placeholder="9"
+                placeholder="7"
                 defaultValue={settings.slotCount}
                 required
               />
             </label>
             {/*
               A-3: スロット index は「動画パネル一覧の N 番目」にそのまま
-              対応する（有効なものだけ数えた index ではない）ので、
-              無効化中のパネルも含めた panels.length 個ぶんスロットを
-              用意しておく必要がある。不足分は同期の対象から外れて表示
-              されない。
+              対応する（有効なものだけ数えた index ではない）。パネルの方が
+              多い場合、足りないスロットは同期時に自動で作られる
+              （obsConnection.ts の sync()）ので、ここは案内だけ出す。
             */}
             {settings.slotCount < panelCount ? (
-              <p className="text-xs text-warning">
-                動画パネルが {panelCount} 件あります。スロット数が足りないと
-                後ろのパネルが同期されません（スロット数 ≥ 動画パネル数を 推奨）
+              <p className="text-xs text-info">
+                動画パネルが {panelCount} 件あります。足りない
+                {settings.sourcePrefix}
+                {settings.slotCount}〜{settings.sourcePrefix}
+                {panelCount - 1} は、パネルを有効にしたときに自動で作成されます
               </p>
             ) : null}
             <div className="grid grid-cols-2 gap-2">
@@ -207,7 +210,7 @@ const ObsSyncFormCard = ({
                   name="grid.cols"
                   min={1}
                   className="input input-sm"
-                  placeholder="3"
+                  placeholder="2"
                   defaultValue={settings.grid.cols}
                   required
                 />
@@ -271,7 +274,7 @@ const ObsSyncFormCard = ({
                   type="number"
                   name="area.width"
                   className="input input-sm"
-                  placeholder="1920"
+                  placeholder="1180"
                   defaultValue={settings.area.width}
                 />
               </label>
@@ -281,7 +284,7 @@ const ObsSyncFormCard = ({
                   type="number"
                   name="area.height"
                   className="input input-sm"
-                  placeholder="1080"
+                  placeholder="996"
                   defaultValue={settings.area.height}
                 />
               </label>

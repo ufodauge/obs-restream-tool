@@ -98,3 +98,93 @@ describe("obsSyncSettingsSchema（valibot）: gap/borderRadius/subtextPosition �
     );
   });
 });
+
+describe("obsSyncSettingsSchema（valibot）: 空の数値入力と範囲の検証", () => {
+  const validStored = {
+    enable: true,
+    url: "ws://127.0.0.1:4455",
+    password: "",
+    baseUrl: "http://localhost:5173",
+    sceneName: "配信",
+    sourcePrefix: "VideoSlot",
+    slotCount: 5,
+    grid: { cols: 3, rows: 2 },
+    area: { x: 0, y: 0, width: 1920, height: 1080 },
+  };
+
+  // 空文字・null を Number() に通すと 0 になり、slotCount / area が黙って
+  // 0 扱いになってしまう。どちらも検証で弾かれ、保存値全体が初期値に戻ること
+  // （= 0 が混入しないこと）を固定する。
+  it.each([
+    ["slotCount が空文字", { ...validStored, slotCount: "" }],
+    ["slotCount が null", { ...validStored, slotCount: null }],
+    ["grid.cols が空白だけ", { ...validStored, grid: { cols: " ", rows: 2 } }],
+    [
+      "area.x が空文字",
+      { ...validStored, area: { ...validStored.area, x: "" } },
+    ],
+  ])("%s は検証に失敗する", (_label, stored) => {
+    const result = tryParseJson(JSON.stringify(stored), obsSyncSettingsSchema);
+    expect(result.ok).toBe(false);
+  });
+
+  it.each([
+    ["width が 0", { width: 0, height: 1080 }],
+    ["height が 0", { width: 1920, height: 0 }],
+    ["width が負", { width: -1, height: 1080 }],
+  ])("area の %s は検証に失敗する", (_label, area) => {
+    const stored = { ...validStored, area: { x: 0, y: 0, ...area } };
+    const result = tryParseJson(JSON.stringify(stored), obsSyncSettingsSchema);
+    expect(result.ok).toBe(false);
+  });
+
+  it("area の width / height が 1 なら通る（下限は 1）", () => {
+    const stored = {
+      ...validStored,
+      area: { x: 0, y: 0, width: 1, height: 1 },
+    };
+    const result = tryParseJson(JSON.stringify(stored), obsSyncSettingsSchema);
+    expect(result.ok).toBe(true);
+  });
+
+  it("数値の文字列（number input 由来）は従来どおり数値に変換される", () => {
+    const stored = {
+      ...validStored,
+      slotCount: "4",
+      area: { x: "10", y: "20", width: "1900", height: "1000" },
+    };
+    const result = tryParseJson(JSON.stringify(stored), obsSyncSettingsSchema);
+    expect(result.ok).toBe(true);
+    expect(
+      result.unwrapOr("FALLBACK" as unknown as ObsSyncSettings),
+    ).toMatchObject({
+      slotCount: 4,
+      area: { x: 10, y: 20, width: 1900, height: 1000 },
+    });
+  });
+});
+
+describe("obsSyncSettingsStore: 起動クエリによるシード（配布パッケージ向け）", () => {
+  it("?obsPassword= が初回ロード時に保存へ反映され、他のフィールドは壊れない", async () => {
+    localStorage.clear();
+    vi.resetModules();
+    vi.stubGlobal("window", {
+      location: {
+        search: "?obsPassword=abc123&obsScene=Restream",
+        href: "http://absolute/C:/x/app/index.html?obsPassword=abc123",
+      },
+    });
+    try {
+      const { obsSyncSettingsStore } = await import("./obsSyncSettings");
+      const settings = createStore().get(obsSyncSettingsStore);
+      expect(settings.password).toBe("abc123");
+      expect(settings.sceneName).toBe("Restream");
+      expect(settings.enable).toBe(true);
+      expect(settings.slotCount).toBe(7);
+      expect(settings.baseUrl).toBe("http://absolute/C:/x/app");
+    } finally {
+      vi.unstubAllGlobals();
+      localStorage.clear();
+    }
+  });
+});

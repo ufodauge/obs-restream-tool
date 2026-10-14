@@ -3,16 +3,12 @@ import type { SubtextPosition } from "./videos/obsSyncSettings";
 
 export const TwitchPanel = ({
   channel,
-  size,
   subtext,
-  fill,
   borderRadius,
   subtextPosition,
 }: {
   channel: string;
-  size: number;
   subtext?: string;
-  fill?: boolean;
   borderRadius?: number;
   subtextPosition?: SubtextPosition;
 }) => {
@@ -24,17 +20,24 @@ export const TwitchPanel = ({
   // Twitch の parent= にはそもそも「埋め込み先ページのホスト名」を渡す
   // 必要があるので、window.location.hostname の方が意味的にも正しい。
   const hostname = window.location.hostname;
+  // channel は配信者入力の文字列なので、クエリに入れる前に URLSearchParams で
+  // エンコードする（"&" や "#" を含んでも別パラメータとして解釈されないように）。
+  const params = new URLSearchParams({
+    channel,
+    parent: hostname,
+    muted: "true",
+    width: "100%",
+    height: "100%",
+  });
   const url =
     import.meta.env.DEV && import.meta.env.VITE_TWITCH_STUB
       ? import.meta.env.VITE_TWITCH_STUB
-      : `https://player.twitch.tv/?channel=${channel}&parent=${hostname}&muted=true&width=100%&heigh=100%`;
+      : `https://player.twitch.tv/?${params.toString()}`;
 
   return (
     <IframePanel
       src={url}
-      size={size}
       subtext={subtext}
-      fill={fill}
       title={`Twitch: ${subtext ?? channel}`}
       borderRadius={borderRadius}
       subtextPosition={subtextPosition}

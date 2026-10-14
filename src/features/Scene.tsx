@@ -10,7 +10,9 @@ export const Scene = () => {
     <div className="grid w-svw">
       <div
         style={{
-          backgroundImage: `url(${background})`,
+          // JSON.stringify で二重引用符付き・エスケープ済みの文字列にする（CSS の url() 内で
+          // 空白や ")" を含む URL が壊れないように）。
+          backgroundImage: `url(${JSON.stringify(background)})`,
         }}
         className={`col-span-full row-span-full bg-cover`}
       />

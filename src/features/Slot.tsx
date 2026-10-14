@@ -44,9 +44,7 @@ export const Slot = () => {
       return (
         <TwitchPanel
           channel={panel.channel}
-          size={panel.size}
           subtext={panel.subtext}
-          fill
           borderRadius={borderRadius}
           subtextPosition={subtextPosition}
         />
@@ -55,9 +53,7 @@ export const Slot = () => {
       return (
         <CustomPanel
           url={panel.url}
-          size={panel.size}
           subtext={panel.subtext}
-          fill
           borderRadius={borderRadius}
           subtextPosition={subtextPosition}
         />

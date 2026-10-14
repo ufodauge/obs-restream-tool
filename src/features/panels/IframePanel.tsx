@@ -1,10 +1,5 @@
 import type { SubtextPosition } from "./videos/obsSyncSettings";
 
-export const SIZE_CLASSNAME_MAP = new Map([
-  [1, "col-span-4 row-span-4"],
-  [2, "col-span-8 row-span-8"],
-]);
-
 // "bottom-full" が旧実装（right-1 bottom-1 left-1 の下部全幅バー）と
 // 完全に一致する見た目なので、これが subtextPosition 未指定時の既定値。
 // 全幅の 2 つ（bottom-full/top-full）は truncate 前提で左右いっぱいに
@@ -21,16 +16,8 @@ const SUBTEXT_POSITION_CLASSNAME_MAP: Record<SubtextPosition, string> = {
 
 type Props = {
   src: string;
-  size: number;
   subtext?: string;
   className?: string;
-  /**
-   * true の場合、SceneBoards の CSS Grid には属さない前提で
-   * ビューポート全体を埋める描画にする（個別 Browser Source = slot 用）。
-   * サイズ・位置は OBS 側の SceneItemTransform が担当するため、ここでは
-   * 何もレイアウト計算をしない。
-   */
-  fill?: boolean;
   /**
    * A-10: iframe のアクセシブルネーム。スクリーンリーダー等に
    * 「これが何の埋め込みか」を伝えるための必須情報なので呼び出し側で
@@ -42,7 +29,6 @@ type Props = {
    * Browser Source は既定で背景が透過なので、丸めた分だけ下のシーンが
    * 透けて見える。ラッパー側の overflow-hidden がクリップを担当するので、
    * ここでは radius の値をラッパーに inline style で渡すだけで良い
-   * （fill/非 fill どちらの分岐でも共通）。
    */
   borderRadius?: number;
   /** subtext（配信者名などのラベル）の表示位置。省略時 "bottom-full"。 */
@@ -51,31 +37,25 @@ type Props = {
 
 /**
  * 任意の iframe をシーンに配置するための土台。
+ * 1 スロット = 1 Browser Source なので、常にビューポート全体を埋めて描画する
+ * （サイズ・位置は OBS 側の SceneItemTransform が担当する）。
  * TwitchPanel や CustomPanel はこのコンポーネントの上に
  * src の組み立て方だけを差し替えて実装する。
  */
 export const IframePanel = ({
   src,
-  size,
   subtext,
   className,
-  fill,
   title,
   borderRadius,
   subtextPosition,
 }: Props) => {
-  const sizeClassName = fill
-    ? "h-svh w-svw"
-    : (SIZE_CLASSNAME_MAP.get(size) ?? "col-span-4 row-span-4");
-  // 角丸は上の rounded クラスではなく下の inline style（borderRadius）に
-  // 一本化したので、ここは bg/shadow だけ残す。
-  const decorationClassName = fill ? "" : "bg-base-300 shadow-xs";
   const subtextPositionClassName =
     SUBTEXT_POSITION_CLASSNAME_MAP[subtextPosition ?? "bottom-full"];
 
   return (
     <div
-      className={`relative overflow-hidden ${decorationClassName} ${sizeClassName} ${className ?? ""}`}
+      className={`relative h-svh w-svw overflow-hidden ${className ?? ""}`}
       // Tailwind の rounded-* は段階的な決め打ち値しか無く、OBS 側で任意の
       // px を設定できるようにするにはここだけ inline style にする必要がある。
       // クリップ自体は wrapper の overflow-hidden が担当するので、iframe 側

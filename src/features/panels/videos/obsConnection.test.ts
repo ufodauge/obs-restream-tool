@@ -12,7 +12,13 @@ import { selectEnabledPanelsWithSlotIndex, type PanelType } from "./panels";
 // 構造的に互換な値なら受け取れるので、ここでは型だけ揃えて自前で持つ。
 type SyncSettings = Pick<
   ObsSyncSettings,
-  "sceneName" | "sourcePrefix" | "slotCount" | "grid" | "area" | "gap"
+  | "sceneName"
+  | "sourcePrefix"
+  | "slotCount"
+  | "grid"
+  | "area"
+  | "gap"
+  | "baseUrl"
 >;
 
 let nextPanelId = 0;
@@ -27,6 +33,7 @@ const makePanel = (enable: boolean, size: 1 | 2): PanelType => ({
 
 const SCENE = "TestScene";
 const PREFIX = "VideoSlot";
+const BASE_URL = "http://localhost:5173";
 
 const sourceNameOf = (index: number): string => `${PREFIX}${index}`;
 
@@ -62,6 +69,7 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
     const settings: SyncSettings = {
       sceneName: SCENE,
       sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
       slotCount: panels.length,
       grid: { cols: 3, rows: 3 },
       area: { x: 0, y: 0, width: 300, height: 300 },
@@ -183,6 +191,7 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
     const settings: SyncSettings = {
       sceneName: SCENE,
       sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
       slotCount: panels.length,
       grid: { cols: 3, rows: 3 },
       area: { x: 0, y: 0, width: 300, height: 300 },
@@ -231,15 +240,118 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
     expect(enabledBySlot.get(4)).toBe(true);
   });
 
-  it("surfaces a failed sync (e.g. sources not created yet) as failedSources instead of silently succeeding", async () => {
-    // seedSceneItems を呼ばない = runObsSetup がまだ一度も走っていない状態。
-    // GetSceneItemId は全スロットで失敗するはず。
+  it("auto-creates the Browser Source for a panel beyond slotCount and packs it like any other slot", async () => {
+    // panels[3] は slotCount(3) の外にあり、OBS 側にはまだソースが無い
+    // （= ダッシュボードでパネルを追加した直後）。以前はここが同期されず、
+    // 中身の無いパネルとして表示されなかった。
+    const panels: PanelType[] = [
+      makePanel(true, 1),
+      makePanel(true, 1),
+      makePanel(true, 1),
+      makePanel(true, 2),
+    ];
+    const settings: SyncSettings = {
+      sceneName: SCENE,
+      sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
+      slotCount: 3,
+      grid: { cols: 3, rows: 3 },
+      area: { x: 0, y: 0, width: 300, height: 300 },
+      gap: 0,
+    };
+    server.seedSceneItems(
+      SCENE,
+      Array.from({ length: settings.slotCount }, (_, i) => sourceNameOf(i)),
+    );
+
+    await connect();
+    await connection.sync(panels, settings);
+
+    const createRequests = server.getRequestsByType("CreateInput");
+    expect(createRequests.map((r) => r.requestData.inputName)).toEqual([
+      sourceNameOf(3),
+    ]);
+    expect(server.getInputSettings(sourceNameOf(3))).toMatchObject({
+      url: `${BASE_URL}/slot.html?index=3`,
+      shutdown: true,
+    });
+
+    // 新しいスロットも既存スロットと同じく packGrid の結果どおりに置かれ、表示される。
+    const ordered = selectEnabledPanelsWithSlotIndex(panels);
+    const expectedRects = packGrid(
+      ordered.map(({ panel }) => panel.size),
+      settings.grid,
+      settings.area,
+      settings.gap,
+    );
+    ordered.forEach(({ slotIndex }, i) => {
+      const item = server.getSceneItem(SCENE, sourceNameOf(slotIndex));
+      expect(item?.enabled).toBe(true);
+      expect(item?.transform).toMatchObject({
+        positionX: expectedRects[i]?.x,
+        positionY: expectedRects[i]?.y,
+        boundsWidth: expectedRects[i]?.width,
+        boundsHeight: expectedRects[i]?.height,
+      });
+    });
+    expect(connection.getStatus()).toMatchObject({
+      state: "connected",
+      failedSources: [],
+    });
+  });
+
+  it("re-adds an existing input to the scene when only its scene item is missing", async () => {
     server.setScenes([SCENE]);
+    server.setInputs([sourceNameOf(0)]);
+
+    const panels: PanelType[] = [makePanel(true, 1)];
+    const settings: SyncSettings = {
+      sceneName: SCENE,
+      sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
+      slotCount: 1,
+      grid: { cols: 1, rows: 1 },
+      area: { x: 0, y: 0, width: 100, height: 100 },
+      gap: 0,
+    };
+
+    await connect();
+    await connection.sync(panels, settings);
+
+    expect(server.getRequestsByType("CreateSceneItem")).toHaveLength(1);
+    expect(server.getSceneItem(SCENE, sourceNameOf(0))?.enabled).toBe(true);
+    expect(connection.getStatus()).toMatchObject({ failedSources: [] });
+  });
+
+  it("does not create sources for disabled panels", async () => {
+    const panels: PanelType[] = [makePanel(true, 1), makePanel(false, 1)];
+    const settings: SyncSettings = {
+      sceneName: SCENE,
+      sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
+      slotCount: 1,
+      grid: { cols: 2, rows: 1 },
+      area: { x: 0, y: 0, width: 200, height: 100 },
+      gap: 0,
+    };
+    server.seedSceneItems(SCENE, [sourceNameOf(0)]);
+
+    await connect();
+    await connection.sync(panels, settings);
+
+    expect(server.getRequestsByType("CreateInput")).toHaveLength(0);
+    expect(connection.getStatus()).toMatchObject({ failedSources: [] });
+  });
+
+  it("surfaces a failed sync (e.g. sources not created yet) as failedSources instead of silently succeeding", async () => {
+    // シーン自体がまだ無い = runObsSetup がまだ一度も走っていない状態。
+    // GetSceneItemId も、スロットの自動作成（CreateInput）も全スロットで失敗するはず。
 
     const panels: PanelType[] = [makePanel(true, 1), makePanel(true, 1)];
     const settings: SyncSettings = {
       sceneName: SCENE,
       sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
       slotCount: panels.length,
       grid: { cols: 2, rows: 1 },
       area: { x: 0, y: 0, width: 200, height: 100 },
@@ -260,11 +372,11 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
   });
 
   it("forceResync clears the sceneItemId cache and re-syncs immediately (setup-button -> sync-page handoff)", async () => {
-    server.setScenes([SCENE]);
     const panels: PanelType[] = [makePanel(true, 1)];
     const settings: SyncSettings = {
       sceneName: SCENE,
       sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
       slotCount: 1,
       grid: { cols: 1, rows: 1 },
       area: { x: 0, y: 0, width: 100, height: 100 },
@@ -273,7 +385,7 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
 
     await connect();
 
-    // 1 回目: まだソースが無いので失敗する
+    // 1 回目: まだシーンもソースも無いので失敗する
     // （= ObsSetupButton が別ページで動いていて、まだ CreateInput していない状態）。
     await connection.sync(panels, settings);
     expect(connection.getStatus()).toMatchObject({
@@ -305,6 +417,7 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
     const settings: SyncSettings = {
       sceneName: SCENE,
       sourcePrefix: PREFIX,
+      baseUrl: BASE_URL,
       slotCount: panels.length,
       grid: { cols: 3, rows: 2 },
       area: { x: 0, y: 0, width: 300, height: 200 },
