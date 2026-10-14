@@ -3,6 +3,7 @@ import { PlusIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { Modal } from "@/components/Modal";
+import { randomId } from "@/libs/id/randomId";
 
 import { type PanelType, videoPanelStores } from "../panels/videos/panels";
 import { VideoPanelForm } from "./VideoPanelForm";
@@ -10,7 +11,7 @@ import { VideoPanelForm } from "./VideoPanelForm";
 const createDefaultPanel = (type: PanelType["type"]): PanelType => {
   const base = {
     enable: false,
-    id: crypto.randomUUID(),
+    id: randomId(),
     size: 1 as const,
     subtext: "",
   };

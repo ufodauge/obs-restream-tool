@@ -1,6 +1,7 @@
 import * as v from "valibot";
 
 import { STORAGE_KEY_PANEL_VIDEOS } from "@/features/storage";
+import { randomId } from "@/libs/id/randomId";
 import { atomWithValidatedStorage } from "@/libs/store/atomWithValidatedStorage";
 
 const AVAILABLE_TYPE_TWITCH = "twitch";
@@ -82,7 +83,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "すば",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -90,7 +91,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "TKC",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -98,7 +99,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "猫麦とろろ",
     enable: false,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -106,7 +107,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "はやふぉ",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -114,7 +115,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "takera",
     enable: false,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -122,7 +123,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "ぷらずま",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
   {
     type: "twitch",
@@ -130,7 +131,7 @@ const videoPanelSourcesInit: PanelType[] = [
     subtext: "つりゃ",
     enable: true,
     size: 1,
-    id: crypto.randomUUID(),
+    id: randomId(),
   },
 ];
 
