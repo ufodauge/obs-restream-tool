@@ -231,6 +231,60 @@ describe("obsConnection.ts (ObsSyncConnection) against a fake obs-websocket v5 s
     expect(enabledBySlot.get(4)).toBe(true);
   });
 
+  it("does not let a panel without a slot (index >= slotCount) take up grid space ahead of the real slots", async () => {
+    // panels[3] は slotCount(3) の外にあり OBS 側のソースが無い。size 2 なので
+    // size 降順ソートでは先頭に来るが、packGrid に渡すと左上の 2x2 を
+    // 取ってしまい、slot 0〜2 の 1x1 が左上に詰められなくなる。
+    const panels: PanelType[] = [
+      makePanel(true, 1),
+      makePanel(true, 1),
+      makePanel(true, 1),
+      makePanel(true, 2),
+    ];
+    const settings: SyncSettings = {
+      sceneName: SCENE,
+      sourcePrefix: PREFIX,
+      slotCount: 3,
+      grid: { cols: 3, rows: 3 },
+      area: { x: 0, y: 0, width: 300, height: 300 },
+      gap: 0,
+    };
+    server.seedSceneItems(
+      SCENE,
+      Array.from({ length: settings.slotCount }, (_, i) => sourceNameOf(i)),
+    );
+
+    await connect();
+    await connection.sync(panels, settings);
+
+    // 3x3 の 1 セル = 100px。slot 0〜2 は 1 行目に x=0,100,200 で並ぶ。
+    const transformRequests = server.getRequestsByType("SetSceneItemTransform");
+    const positionXBySlot = [0, 1, 2].map((slotIndex) => {
+      const sceneItemId = server.getSceneItem(
+        SCENE,
+        sourceNameOf(slotIndex),
+      )?.sceneItemId;
+      const req = transformRequests.find(
+        (r) => r.requestData.sceneItemId === sceneItemId,
+      );
+      if (req === undefined) {
+        throw new Error(`no SetSceneItemTransform for slot ${slotIndex}`);
+      }
+      const transform = (
+        req.requestData as {
+          sceneItemTransform: { positionX: number; boundsWidth: number };
+        }
+      ).sceneItemTransform;
+      return { x: transform.positionX, width: transform.boundsWidth };
+    });
+    expect(positionXBySlot).toEqual([
+      { x: 0, width: 100 },
+      { x: 100, width: 100 },
+      { x: 200, width: 100 },
+    ]);
+    expect(transformRequests).toHaveLength(3);
+  });
+
   it("surfaces a failed sync (e.g. sources not created yet) as failedSources instead of silently succeeding", async () => {
     // seedSceneItems を呼ばない = runObsSetup がまだ一度も走っていない状態。
     // GetSceneItemId は全スロットで失敗するはず。

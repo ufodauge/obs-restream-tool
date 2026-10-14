@@ -308,7 +308,11 @@ export class ObsSyncConnection {
     const myConnectId = this.connectId;
     const mySyncId = ++this.syncId;
 
-    const enabledWithSlot = selectEnabledPanelsWithSlotIndex(panels);
+    // slotCount を超える index には OBS 側のソースが無いので、packGrid に渡す前に
+    // 除外する。残しておくと矩形を先に消費して、後続のパネルの前に穴が空く。
+    const enabledWithSlot = selectEnabledPanelsWithSlotIndex(panels).filter(
+      ({ slotIndex }) => slotIndex < settings.slotCount,
+    );
     const sizes: UnitSize[] = enabledWithSlot.map(({ panel }) => panel.size);
     const rects = packGrid(sizes, settings.grid, settings.area, settings.gap);
 
