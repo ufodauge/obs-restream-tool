@@ -12,7 +12,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "package:obs": "node scripts/package-obs-portable.mjs"
   },
   "dependencies": {
     "daisyui": "catalog:",

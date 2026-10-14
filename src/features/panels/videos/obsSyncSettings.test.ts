@@ -163,3 +163,28 @@ describe("obsSyncSettingsSchema（valibot）: 空の数値入力と範囲の検�
     });
   });
 });
+
+describe("obsSyncSettingsStore: 起動クエリによるシード（配布パッケージ向け）", () => {
+  it("?obsPassword= が初回ロード時に保存へ反映され、他のフィールドは壊れない", async () => {
+    localStorage.clear();
+    vi.resetModules();
+    vi.stubGlobal("window", {
+      location: {
+        search: "?obsPassword=abc123&obsScene=Restream",
+        href: "http://absolute/C:/x/app/index.html?obsPassword=abc123",
+      },
+    });
+    try {
+      const { obsSyncSettingsStore } = await import("./obsSyncSettings");
+      const settings = createStore().get(obsSyncSettingsStore);
+      expect(settings.password).toBe("abc123");
+      expect(settings.sceneName).toBe("Restream");
+      expect(settings.enable).toBe(true);
+      expect(settings.slotCount).toBe(7);
+      expect(settings.baseUrl).toBe("http://absolute/C:/x/app");
+    } finally {
+      vi.unstubAllGlobals();
+      localStorage.clear();
+    }
+  });
+});

@@ -181,7 +181,7 @@ const ObsSyncFormCard = ({
                 name="slotCount"
                 min={1}
                 className="input input-sm"
-                placeholder="9"
+                placeholder="7"
                 defaultValue={settings.slotCount}
                 required
               />
@@ -207,7 +207,7 @@ const ObsSyncFormCard = ({
                   name="grid.cols"
                   min={1}
                   className="input input-sm"
-                  placeholder="3"
+                  placeholder="2"
                   defaultValue={settings.grid.cols}
                   required
                 />
@@ -271,7 +271,7 @@ const ObsSyncFormCard = ({
                   type="number"
                   name="area.width"
                   className="input input-sm"
-                  placeholder="1920"
+                  placeholder="1180"
                   defaultValue={settings.area.width}
                 />
               </label>
@@ -281,7 +281,7 @@ const ObsSyncFormCard = ({
                   type="number"
                   name="area.height"
                   className="input input-sm"
-                  placeholder="1080"
+                  placeholder="996"
                   defaultValue={settings.area.height}
                 />
               </label>
