@@ -5,12 +5,12 @@ import { atomWithValidatedStorage } from "@/libs/store/atomWithValidatedStorage"
 
 type State<K extends string, T extends {} = {}> = { state: K } & T;
 
-export type Duration = {
+type Duration = {
   start: number;
   end: number;
 };
 
-export type StatedDuration =
+type StatedDuration =
   | State<"ready">
   | State<"running", { start: number }>
   | State<"paused", { start: number; pausedAt: number }>

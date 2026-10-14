@@ -89,7 +89,7 @@ export const SceneSettingsForm = (): ReactNode => {
 
   return (
     <SceneSettingsFormCard
-      key={`${panelText.text} ${panelText.background}`}
+      key={JSON.stringify([panelText.text, panelText.background])}
       panelText={panelText}
       onSave={setPanelText}
     />

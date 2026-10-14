@@ -9,7 +9,7 @@
  * 値は FormDataEntryValue（string | File）のまま返す。数値・真偽値への変換は
  * 呼び出し側の valibot スキーマ（v.transform(Number) 等）に任せる。
  */
-export const formDataToNestedObject = (
+const formDataToNestedObject = (
   formData: FormData,
 ): Record<string, unknown> => {
   const result: Record<string, unknown> = {};
