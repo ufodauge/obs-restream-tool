@@ -13,7 +13,11 @@ export type SetupLog =
   | { level: "success"; message: string }
   | { level: "error"; message: string };
 
-const buildSlotUrl = (settings: ObsSyncSettings, index: number): string => {
+// obsConnection.ts の sync() が不足スロットを自動作成するときも同じ URL を使う。
+export const buildSlotUrl = (
+  settings: Pick<ObsSyncSettings, "baseUrl">,
+  index: number,
+): string => {
   const base = settings.baseUrl.replace(/\/+$/, "");
   return `${base}/slot.html?index=${index}`;
 };

@@ -67,6 +67,7 @@ export class FakeObsWebSocketServer {
 
   private scenes = new Set<string>();
   private inputs = new Set<string>();
+  private inputSettings = new Map<string, Record<string, unknown>>();
   // sceneName -> sourceName -> FakeSceneItem
   private readonly sceneItems = new Map<string, Map<string, FakeSceneItem>>();
   private nextSceneItemId = 1;
@@ -148,6 +149,11 @@ export class FakeObsWebSocketServer {
       });
     }
     this.sceneItems.set(sceneName, items);
+  }
+
+  /** CreateInput で作られた入力の inputSettings（url 等）。 */
+  getInputSettings(inputName: string): Record<string, unknown> | undefined {
+    return this.inputSettings.get(inputName);
   }
 
   getSceneItem(
@@ -318,6 +324,25 @@ export class FakeObsWebSocketServer {
       case "CreateInput": {
         const sceneName = data.sceneName as string;
         const inputName = data.inputName as string;
+        // 実際の OBS と同じく、シーンが無い・同名の入力が既にある場合は失敗する。
+        if (!this.scenes.has(sceneName)) {
+          return {
+            ok: false,
+            code: 600,
+            comment: `No source was found by the name of '${sceneName}'.`,
+          };
+        }
+        if (this.inputs.has(inputName)) {
+          return {
+            ok: false,
+            code: 601,
+            comment: "A source already exists by that input name.",
+          };
+        }
+        this.inputSettings.set(
+          inputName,
+          (data.inputSettings ?? {}) as Record<string, unknown>,
+        );
         this.inputs.add(inputName);
         const sceneItemId = this.nextSceneItemId++;
         const items =
@@ -346,6 +371,13 @@ export class FakeObsWebSocketServer {
       case "CreateSceneItem": {
         const sceneName = data.sceneName as string;
         const sourceName = data.sourceName as string;
+        if (!this.scenes.has(sceneName) || !this.inputs.has(sourceName)) {
+          return {
+            ok: false,
+            code: 600,
+            comment: "No source was found.",
+          };
+        }
         const sceneItemId = this.nextSceneItemId++;
         const items =
           this.sceneItems.get(sceneName) ?? new Map<string, FakeSceneItem>();

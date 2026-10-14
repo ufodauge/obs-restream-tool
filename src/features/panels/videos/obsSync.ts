@@ -17,9 +17,9 @@ const SYNC_DEBOUNCE_MS = 300;
 
 /**
  * 動画パネルの一覧・並び順（panels.ts）から各パネルの矩形を計算し、
- * OBS 側に事前に用意された {sourcePrefix}0, {sourcePrefix}1, ... という
- * 名前の Browser Source の SceneItemTransform / SceneItemEnabled を
- * obs-websocket 経由で更新し続ける。
+ * OBS 側の {sourcePrefix}0, {sourcePrefix}1, ... という名前の Browser Source の
+ * SceneItemTransform / SceneItemEnabled を obs-websocket 経由で更新し続ける
+ * （表示に必要なスロットが無ければ obsConnection.ts の sync() が作る）。
  *
  * このロジック自体はどこか特定のページに紐付いていないので、
  * ダッシュボード（index.html）に載せてもいいし、OBS のカスタムブラウザ
