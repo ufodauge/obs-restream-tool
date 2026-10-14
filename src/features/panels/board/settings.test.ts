@@ -64,3 +64,33 @@ describe("boardSettingsSchema（valibot）: source 欠損の migration", () => {
     },
   );
 });
+
+describe("boardSettingsSchema（valibot）: seed は整数のみ", () => {
+  it.each([
+    ["小数", 1.5],
+    ["文字列の非整数", "2.5"],
+    ["NaN 相当（非数の文字列）", "abc"],
+    ["Infinity", "Infinity"],
+  ])("seed が %s なら検証に失敗する", (_label, seed) => {
+    const raw = JSON.stringify({
+      source: "oot",
+      version: latestBingoVersion,
+      seed,
+    });
+    const result = tryParseJson(raw, boardSettingsSchema);
+    expect(result.ok).toBe(false);
+  });
+
+  it("seed が整数の文字列なら数値に変換して通す", () => {
+    const raw = JSON.stringify({
+      source: "oot",
+      version: latestBingoVersion,
+      seed: "99",
+    });
+    const result = tryParseJson(raw, boardSettingsSchema);
+    expect(result.ok).toBe(true);
+    expect(
+      result.unwrapOr("FALLBACK" as unknown as BoardSettings),
+    ).toMatchObject({ seed: 99 });
+  });
+});

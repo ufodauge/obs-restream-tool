@@ -63,7 +63,9 @@ const panelTwitchSchema = v.object({
 const panelIframeSchema = v.object({
   ...panelCoreShape,
   type: v.literal(AVAILABLE_TYPE_IFRAME),
-  url: v.string(),
+  // VideoPanelForm の URL 入力は required で、新規作成時も "https://example.com" を
+  // 入れるので、空文字の「未設定」状態は存在しない。そのため空文字は許さない。
+  url: v.pipe(v.string(), v.url()),
 });
 
 // VideoPanelForm の FormData 検証（B-1 と共通化）・panels[] のストレージ検証の

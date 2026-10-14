@@ -51,12 +51,18 @@ export interface ObsSyncSettings {
 // number input 由来の文字列を数値に直すための共通パイプ。valibot に
 // z.coerce 相当は無いので、Number() での変換を v.transform で明示的に書く
 // （壊れた値は NaN になり、後段の v.number() / v.integer() / v.minValue() で
-// 弾かれる）。
+// 弾かれる）。ただし Number("") と Number(null) は 0 になってしまうので、
+// 入力を空にした場合に黙って 0 とみなさないよう、変換の前に弾く。
 const coercedNumber = v.pipe(
   v.unknown(),
   v.transform((value) => Number(value)),
   v.number(),
 );
+  v.check(
+    (value) =>
+      value !== null && !(typeof value === "string" && value.trim() === ""),
+    "空の値は数値として扱えません",
+  ),
 
 // gap/borderRadius 共通: 0 以上の整数（px）。number input 由来の文字列も
 // coercedNumber で数値化する。
@@ -93,8 +99,9 @@ export const obsSyncSettingsSchema: v.GenericSchema<unknown, ObsSyncSettings> =
     area: v.object({
       x: coercedNumber,
       y: coercedNumber,
-      width: coercedNumber,
-      height: coercedNumber,
+      // 幅・高さ 0 だと packGrid の cellWidth/cellHeight が 0 になり全スロットが潰れるので 1 以上に絞る。
+      width: v.pipe(coercedNumber, v.minValue(1)),
+      height: v.pipe(coercedNumber, v.minValue(1)),
     }),
     gap: v.optional(coercedNonNegativeInt, 0),
     borderRadius: v.optional(coercedNonNegativeInt, 0),

@@ -33,6 +33,7 @@ const coercedSeed = v.pipe(
   v.unknown(),
   v.transform((value) => Number(value)),
   v.number(),
+  v.integer(),
   v.minValue(0),
 );
 
